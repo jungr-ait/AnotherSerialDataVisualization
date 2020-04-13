@@ -6,12 +6,48 @@ import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
+import matplotlib.animation as animation
+from matplotlib import style
 
 import tkinter as tk
 from tkinter import ttk
 
-LARGE_FONT = ("Verdana", 12)
+LARGE_FONT= ("Verdana", 12)
+NORM_FONT= ("Verdana", 10)
+SMALL_FONT= ("Verdana", 8)
+style.use("ggplot")
 
+f = Figure(dpi=100)
+a = f.add_subplot(111)
+
+def popupmsg(msg):
+    popup = tk.Tk()
+    popup.wm_title("!")
+    label = ttk.Label(popup, text=msg, font=NORM_FONT)
+    label.pack(side="top", fill="x", pady=10)
+    B1 = ttk.Button(popup, text="Okay", command = popup.destroy)
+    B1.pack()
+    popup.mainloop()
+
+
+def animate(i):
+    pullData = open("sampleText.txt","r").read()
+    dataList = pullData.split('\n')
+    xList = []
+    yList = []
+    for eachLine in dataList:
+        if len(eachLine) > 1:
+            x, y = eachLine.split(',')
+            xList.append(int(x))
+            yList.append(int(y))
+
+    a.clear()
+    a.plot(xList, yList, label="some sample data")
+
+    a.legend()
+
+    title = "BTC-e BTCUSD Prices\nLast Price: "+str(998)
+    a.set_title(title)
 
 class SeaofBTCapp(tk.Tk):
 
@@ -25,6 +61,17 @@ class SeaofBTCapp(tk.Tk):
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
+
+        # menubar added
+        menubar = tk.Menu(container)
+        filemenu = tk.Menu(menubar, tearoff=0)
+        filemenu.add_command(label="Save settings", command = lambda: popupmsg("Not supported just yet!"))
+        filemenu.add_separator()
+        filemenu.add_command(label="Exit", command=quit)
+        menubar.add_cascade(label="File", menu=filemenu)
+
+        tk.Tk.config(self, menu=menubar)
+
 
         self.frames = {}
 
@@ -105,9 +152,9 @@ class PageThree(tk.Frame):
                              command=lambda: controller.show_frame(StartPage))
         button1.pack()
 
-        f = Figure(figsize=(5, 5), dpi=100)
-        a = f.add_subplot(111)
-        a.plot([1, 2, 3, 4, 5, 6, 7, 8], [5, 6, 1, 3, 8, 9, 3, 5])
+        #f = Figure(figsize=(5, 5), dpi=100)
+        #a = f.add_subplot(111)
+        #a.plot([1, 2, 3, 4, 5, 6, 7, 8], [5, 6, 1, 3, 8, 9, 3, 5])
 
         canvas = FigureCanvasTkAgg(f, self)
         canvas.draw() # .show()
@@ -120,4 +167,6 @@ class PageThree(tk.Frame):
 
 
 app = SeaofBTCapp()
+app.geometry("1280x720")
+ani = animation.FuncAnimation(f, animate, interval=1000)
 app.mainloop()
