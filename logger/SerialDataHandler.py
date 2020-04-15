@@ -3,15 +3,17 @@ import serial
 import threaded_serial
 import threading
 import signal
+from logger.IDataSource import IDataSource
 from logger.DataLogger import DataLogger
 from logger.IDataSink import IDataSink
 from logger.DataSinkQueue import DataSinkQueue
 
-class SerialDataHandler:
+
+class SerialDataHandler(IDataSource):
     data_sink_map = {}  # thread safe access to map ensured
     map_lock = None
     def __init__(self, port, baud_rate, timeout):
-
+        super().__init__()
         # https://stackoverflow.com/a/46810180
         signal.signal(signal.SIGINT, lambda signal, frame: self._signal_handler())
         self.terminated = False
@@ -82,6 +84,9 @@ if __name__ == '__main__':
 
     ser.start()
     time.sleep(4)
+    print("stop sink log1")
+    log1.stop()
+    time.sleep(2)
     print("remove a sink")
     ser.remove_sink(log1)
     ser.remove_sink(int(2))

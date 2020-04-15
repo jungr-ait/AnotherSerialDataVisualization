@@ -18,14 +18,22 @@ class DataLogger(DataFormatParser):
             parts = header.split(',')
             self.csv_writer.writerow(parts)
 
+    def __del__(self):
+        self.stop()
+
     def stop(self):
-        self.csv_file.close()
+        if not self.csv_file.closed:
+            self.csv_file.close()
+
+    def is_closed(self):
+        return not self.csv_file.closed
 
     def write_to_file(self, arr):
-        self.csv_writer.writerow(arr)
-        if self.flush_data:
-            self.csv_file.flush()
-            os.fsync(self.csv_file.fileno())
+        if not self.csv_file.closed:
+            self.csv_writer.writerow(arr)
+            if self.flush_data:
+                self.csv_file.flush()
+                os.fsync(self.csv_file.fileno())
 
     def append_data(self, arr):
         if len(arr) > 0:
