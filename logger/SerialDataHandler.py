@@ -3,63 +3,29 @@ import serial
 import threaded_serial
 import threading
 import signal
-from logger.IDataSource import IDataSource
 from logger.DataLogger import DataLogger
 from logger.IDataSink import IDataSink
 from logger.DataSinkQueue import DataSinkQueue
+from logger.TSDataSource import TSDataSource
 
-
-class SerialDataHandler(IDataSource):
-    data_sink_map = {}  # thread safe access to map ensured
-    map_lock = None
+class SerialDataHandler(TSDataSource):
     def __init__(self, port, baud_rate, timeout):
         super().__init__()
         # https://stackoverflow.com/a/46810180
         signal.signal(signal.SIGINT, lambda signal, frame: self._signal_handler())
         self.terminated = False
-
-        self.map_lock = threading.Lock()
         self.serial = serial.Serial(port=port, baudrate=baud_rate, timeout=timeout)
         self.threaded = threaded_serial.ThreadedSerialManager(connection=self.serial, callback=self.data_received)
 
-    def add_sink(self, sink):
-        if isinstance(sink, IDataSink):
-            with self.map_lock:
-                self.data_sink_map[sink.ID] = sink
-        else:
-            print('-- SerialDataHandler: could not add sink (not a IDataSink!)')
-
-    def remove_sink(self, sink):
-        if isinstance(sink, IDataSink):
-            with self.map_lock:
-                del self.data_sink_map[sink.ID]
-        elif isinstance(sink, int):
-            with self.map_lock:
-                del self.data_sink_map[sink]
-        else:
-            print('-- SerialDataHandler: could not remove sink (not a IDataSink!)')
-
-    def remove_all_sinks(self):
-        with self.map_lock:
-            for key in self.data_sink_map:
-                self.data_sink_map[key].stop()
-            self.data_sink_map = {}
 
     def _signal_handler(self):
         self.terminated = True
 
     def data_received(self, byte_arr):
-
-        print("data received:" + str(byte_arr))
-
         # decode bytes object to produce a string: https://stackoverflow.com/a/606199
         line = byte_arr.decode("ascii")
         line = line.replace('\r\n', '')
-
-        with self.map_lock:
-            for key in self.data_sink_map:
-                self.data_sink_map[key].sink(line)
-
+        self.distribute_data(line)
 
     def start(self):
         self.threaded.start()

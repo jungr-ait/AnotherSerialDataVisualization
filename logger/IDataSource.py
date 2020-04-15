@@ -21,6 +21,10 @@ class IDataSource(ABC):
         pass
 
     @abstractmethod
+    def distribute_data(self, msg):
+        pass
+
+    @abstractmethod
     def start(self):
         pass
 
