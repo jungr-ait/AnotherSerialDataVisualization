@@ -7,7 +7,7 @@ from logger.IDataSource import IDataSource
 class LoggerWindow(tk.Toplevel):
     Source = None
 
-    def __init__(self, parent, source=None, title= "I am a LoggerWindow!"):
+    def __init__(self, parent, source=None, title= "LoggerWindow!"):
         tk.Toplevel.__init__(self, parent)  # instead of super
         self.title(title)
         self.setup()

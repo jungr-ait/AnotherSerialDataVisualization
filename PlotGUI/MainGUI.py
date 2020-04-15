@@ -9,10 +9,12 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter.filedialog import askopenfilename
 from tkinter.filedialog import asksaveasfilename
+from tkinter import messagebox
 from logger.serial_utils import *
-
-from PlotGUI.Model import Model
-
+from logger.SerialDataSource import SerialDataSource
+from logger.DataSinkQueue import DataSinkQueue
+from PlotGUI.LoggerWindow import LoggerWindow
+from PlotGUI.PlotterWindow import PlotterWindow
 
 class MainGUI(tk.Tk):  # a tk.Toplevel
     def __init__(self, *args, **kwargs):
@@ -24,8 +26,17 @@ class MainGUI(tk.Tk):  # a tk.Toplevel
         self.setup()
 
         self.PlotWindowList = []
-        self.MODEL = Model()
+        self.LogWindowList= []
+        self.DataSource = None
+        self.DataSinkQueue = None
+        self.run_data_view = False
+        self.after_id = 0
 
+    def __del__(self):
+        self.run_data_view = False
+        if self.after_id is not None:
+            self.after_cancel(self.after_id)
+        self.quit()
 
     def setup(self):
         """Calls methods to setup the user interface."""
@@ -74,16 +85,12 @@ class MainGUI(tk.Tk):  # a tk.Toplevel
         ## LOGGERCONFIGFRAME:
         self.LoggerConfigFrame = tk.ttk.Labelframe(self, text='LoggerConfig', padding=15)
         ### widgets
-        self.lbl_LoggerFormat = ttk.Label(self.LoggerConfigFrame, text="LoggerFormat:")
-        self.txtvar_LoggerFormatusername = tk.StringVar()
-        self.txtvar_LoggerFormatusername.set('%f,%f,%f')
-        self.txt_LoggerFormat = ttk.Entry(self.LoggerConfigFrame, textvariable=self.txtvar_LoggerFormatusername)
         self.btn_CreatePlotter_text = tk.StringVar()   # state that will change
-        self.btn_CreatePlotter_text.set("Create Plotter")
+        self.btn_CreatePlotter_text.set("Plotter Window")
         self.btn_CreatePlotter = ttk.Button(self.LoggerConfigFrame, textvariable=self.btn_CreatePlotter_text,
                              command=self.on_btn_CreatePlotter)
         self.btn_CreateLogger_text = tk.StringVar()   # state that will change
-        self.btn_CreateLogger_text.set("Create Logger")
+        self.btn_CreateLogger_text.set("Logger Window")
         self.btn_CreateLogger = ttk.Button(self.LoggerConfigFrame, textvariable=self.btn_CreateLogger_text,
                              command=self.on_btn_CreateLogger)
 
@@ -112,11 +119,8 @@ class MainGUI(tk.Tk):  # a tk.Toplevel
 
         ## LOGGERCONFIGFRAME:
         self.LoggerConfigFrame.grid(column=0, row=1, columnspan=5, sticky=(tk.N, tk.S, tk.E, tk.W))
-        self.LoggerConfigFrame.grid_rowconfigure(2, weight=1)
-        self.lbl_LoggerFormat.grid(column=0, row=1, columnspan=2, sticky=(tk.E))
-        self.txt_LoggerFormat.grid(column=2, row=1, columnspan=2)
-        self.btn_CreatePlotter.grid(column=4, row=1)
-        self.btn_CreateLogger.grid(column=5, row=1)
+        self.btn_CreatePlotter.grid(column=1, row=1, columnspan=2)
+        self.btn_CreateLogger.grid(column=3, row=1, columnspan=2)
 
         ## DATAVIEWGFRAME:
         self.DataViewFrame.grid(column=0, row=2, columnspan=5, sticky=(tk.N, tk.S, tk.E, tk.W))
@@ -167,22 +171,43 @@ class MainGUI(tk.Tk):  # a tk.Toplevel
         print("button state:", self.btn_SerialConnect_text.get())
         if  self.btn_SerialConnect_text.get() == "Open":
             # if successful allow us to close the serial...
-            self.MODEL.open_serial(self.cb_port.get(), self.cb_baud.get(), self)
+            self.DataSource = SerialDataSource(self.cb_port.get(), self.cb_baud.get())
             self.btn_SerialConnect_text.set("Close")
+            self.DataSinkQueue = DataSinkQueue(len=1000)
+            self.DataSource.add_sink(self.DataSinkQueue)
+            self.run_data_view = True
+            self.delete_dataview()  # clear content of data view
+            self.refresh_plot()
+            self.DataSource.start()
         else:
-            self.delete_dataview() # clear content of data view
+            self.run_data_view = False
+            self.DataSource.remove_sink(self.DataSinkQueue)
+            self.DataSinkQueue = None
+            self.DataSource.stop()
+            self.DataSource = None
             self.btn_SerialConnect_text.set("Open")
 
-    ## LOGGERCONFIGFRAME:
-    def on_btn_CreatePlotter(self):
-        print("button state:", self.btn_CreatePlotter_text.get())
 
+    def get_IDataSource(self):
+        if self.DataSource is None:
+            tk.messagebox.showerror("Open Serial", message="First we need a IDataSource!")
+
+        return self.DataSource
+
+    ## LOGGERCONFIGFRAME:
     def on_btn_CreateLogger(self):
-        print("button state:", self.btn_CreateLogger_text.get())
-        if self.btn_SerialConnect_text.get() == "Close":
-            name = asksaveasfilename(title = "Select CSV file",filetypes = (("*.csv"),("all files","*.*")))
-            print(name)
-            self.MODEL.add_data_logger(filename=name, format_str=self.txtvar_LoggerFormatusername.get(), title='a,b,c')
+        data_source = self.get_IDataSource()
+        if data_source is not None:
+            w = LoggerWindow(self)
+            w.Source = self.DataSource
+
+
+    def on_btn_CreatePlotter(self):
+        data_source = self.get_IDataSource()
+        data_source = self.get_IDataSource()
+        if data_source is not None:
+            w = PlotterWindow(self)
+            w.Source = self.DataSource
 
 
     ## DATAVIEWGFRAME:
@@ -192,11 +217,21 @@ class MainGUI(tk.Tk):  # a tk.Toplevel
 
     ## from DataFormatParser
     def parse_line(self, line):
-        print("add line to lst_DataView...")
         self.lst_DataView.insert('end', line)
         if self.lst_DataView.size() > self.lst_DataView_buffersize:
-            self.lst_DataView.delete(0, 10)
-            print("delete items from lst_DataView...")
+            self.lst_DataView.delete(0, self.lst_DataView.size()-self.lst_DataView_buffersize)
+
+
+    def refresh_plot(self):
+        #https://riptutorial.com/tkinter/example/22870/-after--
+        if self.run_data_view:
+            if self.DataSinkQueue is not None:
+                while(self.DataSinkQueue.available()):
+                    self.parse_line(self.DataSinkQueue.data_queue.get())
+
+
+            self.after_id =self.after(100, self.refresh_plot)
+
 
     def stop(self):
         print("stop")
@@ -204,5 +239,5 @@ class MainGUI(tk.Tk):  # a tk.Toplevel
 
 if __name__ == '__main__':
     app = MainGUI()
-    app.geometry("1280x720")
+    app.geometry("480x720")
     app.mainloop()
