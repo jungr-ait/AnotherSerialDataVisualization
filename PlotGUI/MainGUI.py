@@ -11,6 +11,7 @@ from tkinter.filedialog import askopenfilename
 from tkinter.filedialog import asksaveasfilename
 from logger.serial_utils import *
 
+from PlotGUI.Model import Model
 
 
 class MainGUI(tk.Tk):  # a tk.Toplevel
@@ -22,7 +23,8 @@ class MainGUI(tk.Tk):  # a tk.Toplevel
         #self.ContentFrame.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.setup()
 
-        self.PlotWindowList = [];
+        self.PlotWindowList = []
+        self.MODEL = Model()
 
 
     def setup(self):
@@ -38,7 +40,6 @@ class MainGUI(tk.Tk):  # a tk.Toplevel
         ## FILEMENU
         filemenu = tk.Menu(self.menu)
         self.menu.add_cascade(label="File", menu=filemenu)
-        filemenu.add_command(label="New", command=self.NewFile)
         filemenu.add_command(label="Open...", command=self.OpenFile)
         filemenu.add_command(label="Save as...", command=self.SaveAs)
         filemenu.add_separator()
@@ -97,7 +98,7 @@ class MainGUI(tk.Tk):  # a tk.Toplevel
         self.lst_DataView.size()
         self.lst_DataView_buffersize  = 50 # max buffersize in listbox.
         for i in range(1, 101):
-            self.add_line_to_dataview('Line %d of 100' % i)
+            self.parse_line('Line %d of 100' % i)
 
 
     def setup_layout(self):
@@ -141,9 +142,6 @@ class MainGUI(tk.Tk):  # a tk.Toplevel
     def client_exit(self):
         exit()
 
-    def NewFile(self):
-        print("New File!")
-
     def OpenFile(self):
         name = askopenfilename()
         print(name)
@@ -169,9 +167,10 @@ class MainGUI(tk.Tk):  # a tk.Toplevel
         print("button state:", self.btn_SerialConnect_text.get())
         if  self.btn_SerialConnect_text.get() == "Open":
             # if successful allow us to close the serial...
-
+            self.MODEL.open_serial(self.cb_port.get(), self.cb_baud.get(), self)
             self.btn_SerialConnect_text.set("Close")
         else:
+            self.delete_dataview() # clear content of data view
             self.btn_SerialConnect_text.set("Open")
 
     ## LOGGERCONFIGFRAME:
@@ -180,20 +179,27 @@ class MainGUI(tk.Tk):  # a tk.Toplevel
 
     def on_btn_CreateLogger(self):
         print("button state:", self.btn_CreateLogger_text.get())
-
+        if self.btn_SerialConnect_text.get() == "Close":
+            name = asksaveasfilename(title = "Select CSV file",filetypes = (("*.csv"),("all files","*.*")))
+            print(name)
+            self.MODEL.add_data_logger(filename=name, format_str=self.txtvar_LoggerFormatusername.get(), title='a,b,c')
 
 
     ## DATAVIEWGFRAME:
     def delete_dataview(self):
         self.lst_DataView.delete(0, self.lst_DataView.size())
 
-    def add_line_to_dataview(self, line):
+
+    ## from DataFormatParser
+    def parse_line(self, line):
         print("add line to lst_DataView...")
         self.lst_DataView.insert('end', line)
         if self.lst_DataView.size() > self.lst_DataView_buffersize:
             self.lst_DataView.delete(0, 10)
             print("delete items from lst_DataView...")
 
+    def stop(self):
+        print("stop")
 
 
 if __name__ == '__main__':
