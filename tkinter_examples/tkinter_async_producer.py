@@ -6,28 +6,23 @@ import threading
 import random
 import time
 
+from PlotGUI.ICyclic import ICyclic
 
-class Producer(threading.Thread):
+
+class Producer(ICyclic):
     cycle_period_ms  = 10  # periode [ms] of the run method
     do_run = True  # TODO: is do_run atomic? Or should it be locked?
     def __init__(self, data_queue, period_ms =  10):
-        super().__init__(target=self.run)  # important: init Thread
-        self.cycle_period_ms = period_ms
+        ICyclic.__init__(self, period_ms=period_ms)  # important: init Thread
         self.data_queue = data_queue
+        self.start()
 
     def __del__(self):
-        if  self.do_run:
-            self.stop()
         print('Producer is dying...')
 
-    def run(self):
-        while self.do_run:
-            self.data_queue.put(random.random())
-            time.sleep(self.cycle_period_ms / 1000.0)
+    def periodic_call(self):
+        self.data_queue.put(random.random())
 
-    def stop(self):
-        self.do_run = False  # does the rest...
-        self.join()
 
 
 
@@ -42,10 +37,12 @@ class ConsumerGUI(tk.Tk):  # a tk.Toplevel
 
 
         self.content = ttk.Frame(self, padding=10)
-        self.btn1 = ttk.Button(self, text='create consumer', command=self.on_btn1)
-        self.btn1.pack()
-        self.btn2 = ttk.Button(self, text='stop', command=self.on_btn2)
-        self.btn2.pack()
+        self.btn_create = ttk.Button(self, text='create producer', command=self.on_btn_create)
+        self.btn_create.pack()
+        self.btn_stop = ttk.Button(self, text='stop', command=self.on_btn_stop)
+        self.btn_stop.pack()
+        self.btn_clear = ttk.Button(self, text='clear', command=self.on_btn_clear)
+        self.btn_clear.pack()
         self.btn_quit = ttk.Button(self, text='quit', command=self.on_btn_quit)
         self.btn_quit.pack()
         # data field
@@ -67,13 +64,18 @@ class ConsumerGUI(tk.Tk):  # a tk.Toplevel
         print('kill object....')
 
     ## WIDGED callbacks:
-    def on_btn1(self):
-        print('btn1 pressed - create consumer')
+    def on_btn_create(self):
+        print('btn1 pressed - create producer')
         self.create_producer()
 
-    def on_btn2(self):
-        print('btn2 pressed - stop consumer')
+    def on_btn_stop(self):
+        print('btn2 pressed - stop producer')
         self.kill_producer()
+
+    def on_btn_clear(self):
+        print('on_btn_clear pressed - clear dataview list')
+        self.lst_DataView.delete(0, self.lst_DataView.size() )
+
 
     def on_btn_quit(self):
         print('quit')
@@ -84,7 +86,7 @@ class ConsumerGUI(tk.Tk):  # a tk.Toplevel
     def create_producer(self):
         if self.producer is None:
             self.producer = Producer(self.producer_queue, 500)
-            self.producer.start()
+            self.producer.set_continue()
         else:
             print('--- producer already created!')
 
@@ -104,14 +106,14 @@ class ConsumerGUI(tk.Tk):  # a tk.Toplevel
         self.after(self.periodic_rate_ms, self.periodicCall)
 
     def poll_producer_queue(self):
-        print('periodic call...')
+        print('Consumer -- periodic call...')
         while self.producer_queue.qsize():
             msg = self.producer_queue.get(0)
             print('we got: ' + str(msg))
             self.add_line_to_lst_DataView(str(msg))
 
     def add_line_to_lst_DataView(self, line):
-        print('add line to lst_DataView...')
+        print('Consumer -- add line to lst_DataView...')
         self.lst_DataView.insert('end', line)
 
         # truncate DataView list if too long:
