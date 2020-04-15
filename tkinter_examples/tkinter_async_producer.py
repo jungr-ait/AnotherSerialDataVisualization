@@ -2,11 +2,9 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 import queue
-import threading
 import random
-import time
 
-from PlotGUI.ICyclic import ICyclic
+from logger.ICyclic import ICyclic
 
 
 class Producer(ICyclic):
