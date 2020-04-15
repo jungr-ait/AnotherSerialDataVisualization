@@ -32,6 +32,7 @@ class SerialDataHandler:
 
         print("data received:" + str(byte_arr))
 
+        # decode bytes object to produce a string: https://stackoverflow.com/a/606199
         line = byte_arr.decode("ascii")
         line = line.replace('\r\n', '')
 

@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+# https://www.python-course.eu/python3_abstract_classes.php
 class IDataSink(ABC):
     def __init__(self):
         super().__init__()

@@ -14,9 +14,15 @@ class DataSinkQueue(IDataSink):
 
     ## IDataSink -- Interface:
     def sink(self, data):
+
+        # check if Queue is full: https://www.programcreek.com/python/example/2533/Queue.Full
         try:
+            if self.data_queue.full():
+                #print('DataSinkQueue is full! --> dropping oldest msg')
+                self.data_queue.get()
+
             self.data_queue.put(data, timeout=0.001)
-            print('DataSinkQueue.sink: ' + str(data))
+            #print('DataSinkQueue.sink: ' + str(data))
 
         except AttributeError:
             # self.pool is None.
@@ -24,9 +30,7 @@ class DataSinkQueue(IDataSink):
 
         except queue.Full:
             # This should never happen if self.block == True
-            print('DataSinkQueue is full! --> dropping oldest msg')
-            self.data_queue.get()
-            self.sink(data)
+            print('DataSinkQueue is full!')
 
     def stop(self):
         print("stop handle")
