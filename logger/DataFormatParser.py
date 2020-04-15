@@ -1,11 +1,11 @@
 import scanf
+from logger.IDataSink import  IDataSink
 
-class DataFormatParser:
+
+class DataFormatParser(IDataSink):
     def __init__(self, format_str="%f,%f,%f"):
+        super().__init__()
         self.format_str = format_str
-
-    def stop(self):
-        print("stop handle")
 
     def append_data(self, arr):
         print("append:" + str(arr))
@@ -17,3 +17,24 @@ class DataFormatParser:
         # https://stackoverflow.com/a/7816439
         if arr is not None:
             self.append_data(arr)
+
+    ## IDataSink -- Interface:
+    def sink(self, data):
+        self.parse_line(str(data))
+
+    def stop(self):
+        print("stop handle")
+
+
+
+if __name__ == '__main__':
+
+    i = DataFormatParser(format_str='%d')
+
+    i.sink('1')
+    i.sink('2.23')
+    i.sink('3')
+    i.sink('foo')
+
+    print("is instance of abstract basis class: " + str(isinstance(i, IDataSink)))
+

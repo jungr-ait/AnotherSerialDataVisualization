@@ -3,9 +3,10 @@ import serial
 import threaded_serial
 import signal
 from logger.DataLogger import DataLogger
+from logger.IDataSink import IDataSink
 
 class SerialDataHandler:
-    data_logger_vec = []
+    data_sink_vec = []
 
     def __init__(self, port, baud_rate, timeout):
 
@@ -13,12 +14,15 @@ class SerialDataHandler:
         signal.signal(signal.SIGINT, lambda signal, frame: self._signal_handler())
         self.terminated = False
 
+
         self.serial = serial.Serial(port=port, baudrate=baud_rate, timeout=timeout)
         self.threaded = threaded_serial.ThreadedSerialManager(connection=self.serial, callback=self.data_received)
 
-    def add_datalogger(self, logger):
-        #if isinstance(logger, DataFormatParser):
-        self.data_logger_vec.append(logger)
+    def add_datalogger(self, sink):
+        if isinstance(sink, IDataSink):
+            self.data_sink_vec.append(sink)
+        else:
+            print('-- SerialDataHandler: could not add logger (not a IDataSink!)')
 
     def _signal_handler(self):
         self.terminated = True
@@ -30,8 +34,8 @@ class SerialDataHandler:
 
         line = line.replace('\r\n', '')
 
-        for logger in self.data_logger_vec:
-            logger.parse_line(line)
+        for logger in self.data_sink_vec:
+            logger.sink(line)
 
     def stop(self):
         self.terminated = True
@@ -45,7 +49,7 @@ class SerialDataHandler:
             time.sleep(1)
 
         self.threaded.stop()
-        for logger in self.data_logger_vec:
+        for logger in self.data_sink_vec:
             logger.stop()
 
 
