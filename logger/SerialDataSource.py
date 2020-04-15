@@ -11,12 +11,12 @@ from logger.TSDataSource import TSDataSource
 
 
 class SerialDataSource(TSDataSource):
-    def __init__(self, port, baud_rate, timeout):
+    def __init__(self, port, baud_rate=115200, timeout=1):
         super().__init__()
         # https://stackoverflow.com/a/46810180
         signal.signal(signal.SIGINT, lambda signal, frame: self._signal_handler())
         self.terminated = False
-        self.serial = serial.Serial(port=port, baudrate=baud_rate, timeout=timeout)
+        self.serial = serial.Serial(port=port, baudrate=int(baud_rate), timeout=timeout)
         self.threaded = threaded_serial.ThreadedSerialManager(connection=self.serial, callback=self.data_received)
 
 

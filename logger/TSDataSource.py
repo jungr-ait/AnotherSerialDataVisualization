@@ -34,7 +34,7 @@ class TSDataSource(IDataSource):
             self.data_sink_map = {}
 
     def distribute_data(self, msg):
-        print("TSDataSource.distribute_data():" + str(msg))
+        #print("TSDataSource.distribute_data():" + str(msg))
 
         with self.map_lock:
             for key in self.data_sink_map:

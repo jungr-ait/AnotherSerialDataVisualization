@@ -49,7 +49,7 @@ class DataPlotter(DataFormatParser):
         if self.use_timestamp:
             t_arr = self.data[0];
 
-        print("plot figure...")
+        #print("plot figure...")
         with self.data_lock:
             data = self.data.copy()
 
