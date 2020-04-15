@@ -4,20 +4,10 @@ from tkinter.filedialog import askopenfilename, asksaveasfilename
 from PlotGUI.LoggerModel import LoggerModel
 from logger.IDataSource import IDataSource
 
-def create_textfield(parent, lbl_text, default_text):
-    lbl = ttk.Label(parent, text=lbl_text)
-    txtvar = tk.StringVar()
-    txtvar.set(default_text)
-    txtentry = ttk.Entry(parent, textvariable=txtvar)
-    return [lbl, txtvar, txtentry]
-
-
-
-
 class LoggerWindow(tk.Toplevel):
     Source = None
 
-    def __init__(self, parent, source=None, title= "I am a WindowLogger!"):
+    def __init__(self, parent, source=None, title= "I am a LoggerWindow!"):
         tk.Toplevel.__init__(self, parent)  # instead of super
         self.title(title)
         self.setup()
@@ -129,8 +119,11 @@ if __name__ == '__main__':
     w = LoggerWindow(root)
 
 
-    from logger.SerialDataHandler import SerialDataHandler
+    from logger.MockSource import MockSource
 
-    w.Source = SerialDataHandler(port='/dev/ttyUSB0', baud_rate=115200, timeout=1)
+    w.Source = MockSource(500, prefix='')
     w.Source.start()
     root.mainloop()
+    print("root is dead")
+    w.Source.stop()
+    print("source is dead")
