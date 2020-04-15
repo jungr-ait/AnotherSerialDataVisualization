@@ -133,10 +133,10 @@ class PlotterWindow(tk.Toplevel):
     def on_btn_Pause(self):
         print("button state:", self.txtbtn_Pause.get())
         if self.txtbtn_Pause.get() == "Pause":
-            # we want to Pause
+            # user wants to Pause
             self.txtbtn_Pause.set("Resume")
         else:
-            # we want to Resume:
+            # user wants to Resume:
             self.txtbtn_Pause.set("Pause")
             self.refresh_plot()
 

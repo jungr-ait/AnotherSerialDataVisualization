@@ -21,9 +21,7 @@ class DataPlotter(DataFormatParser):
         self.use_timestamp = use_timestamp  # specifies wheater first entry is timestamp
         self.max_samples = int(max_samples)
 
-
         self.num_axis = format_str.count('%')
-
         self.clear_data()
 
 
@@ -49,7 +47,6 @@ class DataPlotter(DataFormatParser):
         if self.use_timestamp:
             t_arr = self.data[0];
 
-        #print("plot figure...")
         with self.data_lock:
             data = self.data.copy()
 
@@ -59,7 +56,6 @@ class DataPlotter(DataFormatParser):
                 xs = data[i]
                 ts = list(range(self.num_samples-len(xs), self.num_samples))
                 self.ax.plot(ts, xs, label="x"+str(i))
-
         else:
             for i in range(1, self.num_axis):
                 xs = data[i]
@@ -73,7 +69,7 @@ class DataPlotter(DataFormatParser):
         #self.fig.tight_layout()
         plt.pause(1e-6) # The pause is needed because the GUI events happen while the main code is sleeping, including drawing
 
-
+    # DataFormatParser - Interface
     def append_data(self, arr):
         if len(arr) > 0:
             self.num_samples += 1

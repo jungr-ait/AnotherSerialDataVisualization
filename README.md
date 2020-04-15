@@ -29,4 +29,19 @@ Each `DataPlotter` will be created in a new `tk.Toplevel(MainWindow)` to display
 In the `DataPlotter`, two widgets are shown, one to specify the max number of samples and a canvas blow to show the graph
 
 
- Dta
+ 
+ ### PlotterWindow
+ 
+ Create a dynamic figure using matplot lib. 
+ Data for the plot is received from a IDataSource (e.g. a SerialDataSource).
+ Specify a format_str how each line received from the IDataSource should be interpreted.
+ It is C++ <scanf> like: %f for float, %d for integer. Example: <mag:%f,%f,%f> would expect
+ a line containing <mag> followed by three comma separated float values. It it fits it will be added
+ to the buffer in the IDataSink, which is our DataPlotter, creating the figure.
+ 
+- format_str: scanf string to parsed
+- title: title of the figure
+- legend: how the axis should be labeled
+- max_sample: reduces the number of samples in the figure, dropping oldest ones
+- pause/resume: pauses/resumes the refreshing of the plot - time to save figures!
+- create/close: creates a new or destroys a plot.

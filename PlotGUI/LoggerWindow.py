@@ -96,8 +96,6 @@ class LoggerWindow(tk.Toplevel):
         if  self.txtbtn_Create.get() == "Create Logger":
             self.Model.create_logger(self.txt_Filename.get(), self.txt_Format.get(),
                                      self.txt_Header.get(), self.checkvar_flush.get())
-
-            # TODO: give the object the parent.serial_handler!
             if isinstance(self.Source, IDataSource):
                 self.Source.add_sink(self.Model.get_logger())
 
@@ -105,8 +103,6 @@ class LoggerWindow(tk.Toplevel):
         else: 
             # Close logger:
             self.txtbtn_Create.set("Create Logger")
-            # TODO: remove the object from the parent.serial_handler!
-
             if isinstance(self.Source, IDataSource):
                 self.Source.remove_sink(self.Model.get_logger())
             self.Model.close_logger()

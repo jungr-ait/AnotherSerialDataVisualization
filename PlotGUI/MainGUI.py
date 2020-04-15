@@ -104,40 +104,34 @@ class MainGUI(tk.Tk):  # a tk.Toplevel
         self.lst_DataView.insert('end', 'empty...')
         self.lst_DataView.size()
         self.lst_DataView_buffersize  = 50 # max buffersize in listbox.
-        for i in range(1, 101):
-            self.parse_line('Line %d of 100' % i)
+        self.btn_DataViewClear = ttk.Button(self.DataViewFrame, text='Clear',
+                             command=self.delete_dataview)
 
 
     def setup_layout(self):
 
         ## SERIALCONFIGFRAME
-        self.SerialConfigFrame.grid(column=0, row=0, columnspan=5, sticky=(tk.N, tk.S, tk.E, tk.W))
+        self.SerialConfigFrame.grid(column=0, row=0, columnspan=5, sticky="nesw")
         self.SerialConfigFrame.grid_rowconfigure(2, weight=1)
         self.cb_port.grid(column=0, row=0, columnspan=2)
         self.cb_baud.grid(column=2, row=0, columnspan=2)
         self.btn_SerialConnect.grid(column=4, row=0)
 
         ## LOGGERCONFIGFRAME:
-        self.LoggerConfigFrame.grid(column=0, row=1, columnspan=5, sticky=(tk.N, tk.S, tk.E, tk.W))
+        self.LoggerConfigFrame.grid(column=0, row=1, columnspan=5, sticky="nesw")
         self.btn_CreatePlotter.grid(column=1, row=1, columnspan=2)
         self.btn_CreateLogger.grid(column=3, row=1, columnspan=2)
 
         ## DATAVIEWGFRAME:
-        self.DataViewFrame.grid(column=0, row=2, columnspan=5, sticky=(tk.N, tk.S, tk.E, tk.W))
+        self.DataViewFrame.grid(column=0, row=2, columnspan=5, sticky="nesw")
         self.DataViewFrame.grid_rowconfigure(2, weight=1)
         self.DataViewFrame.grid_columnconfigure(0, weight=1)
-        self.lst_DataView.grid(column=0, row=2, sticky=(tk.N, tk.S, tk.E, tk.W))
-        self.scrl_DataView.grid(column=1, row=2, sticky=(tk.N, tk.S, tk.E))
+        self.lst_DataView.grid(column=0, row=2, sticky="nesw")
+        self.scrl_DataView.grid(column=1, row=2, sticky="nesw")
+        self.btn_DataViewClear.grid(column=0, row=3, sticky="nesw")
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(2, weight=1)
-        # self.rowconfigure(0, weight=1)
-        # self.rowconfigure(1, weight=1)
-        # self.columnconfigure(0, weight=1)
-        # self.columnconfigure(1, weight=1)
-        # self.columnconfigure(2, weight=1)
-        # self.columnconfigure(3, weight=1)
-        # self.columnconfigure(4, weight=1)
 
         return
 
