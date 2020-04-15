@@ -19,6 +19,7 @@ class MockSource(ICyclic, TSDataSource):
         self.map_lock = threading.Lock()
 
         self.prefix = prefix
+        self.set_continue()
 
     ## override from IDataSource and ICyclic
     def stop(self):
@@ -37,8 +38,6 @@ if __name__ == '__main__':
 
     print('Let the Mock produce')
     mock.start()
-    mock.set_continue()
-
 
     print('main thread rests a bit....')
     time.sleep(4)
