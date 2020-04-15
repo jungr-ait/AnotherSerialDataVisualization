@@ -1,14 +1,16 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.filedialog import askopenfilename, asksaveasfilename
+from tkinter import messagebox
 from PlotGUI.PlotterModel import PlotterModel
 from logger.IDataSource import IDataSource
+from logger.DataSinkQueue import DataSinkQueue
 
 
 
 class PlotterWindow(tk.Toplevel):
     Source = None
-    def __init__(self, parent, source=None, title= "I am a PlotterWindow!"):
+    def __init__(self, parent, source=None, title= "PlotterWindow!"):
         tk.Toplevel.__init__(self, parent)  # instead of super
         self.title(title)
         self.setup()
@@ -27,8 +29,20 @@ class PlotterWindow(tk.Toplevel):
 
     def setup(self):
         """Calls methods to setup the user interface."""
+        self.init_menu()
         self.create_widgets()
         self.setup_layout()
+
+    def init_menu(self):
+        self.menu = tk.Menu(self)
+        self.config(menu=self.menu)
+
+        ## HELPMENU
+        helpmenu = tk.Menu(self.menu)
+        self.menu.add_cascade(label="Help", menu=helpmenu)
+        helpmenu.add_command(label="About...", command=self.on_About)
+        helpmenu.add_command(label="Exit", command=self.quit)
+
     def create_widgets(self):
         ## MainFrame:
         self.MainFrame = tk.ttk.Frame(self, padding=(10,5))
@@ -110,6 +124,11 @@ class PlotterWindow(tk.Toplevel):
         self.MainFrame.columnconfigure(1, weight=1)
         self.MainFrame.columnconfigure(2, weight=3)
 
+    def on_About(self):
+        with open("PlotterWindowAbout.txt") as f:
+            info_str = f.read()
+            tk.messagebox.showinfo("About", message=str(info_str), icon='question')
+
 
     def on_btn_Pause(self):
         print("button state:", self.txtbtn_Pause.get())
@@ -145,6 +164,7 @@ class PlotterWindow(tk.Toplevel):
             self.Model.close()
 
     def refresh_plot(self):
+        #https://riptutorial.com/tkinter/example/22870/-after--
         if (self.txtbtn_Create.get() == "Close Plotter") & (self.txtbtn_Pause.get() == "Pause"):
             self.Model.periodic_call()
             self.after_id =self.after(int(self.cb_UpdateInterval.get()), self.refresh_plot)
