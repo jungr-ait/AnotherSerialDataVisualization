@@ -4,6 +4,7 @@ import threaded_serial
 import signal
 from logger.DataLogger import DataLogger
 from logger.IDataSink import IDataSink
+from logger.DataSinkQueue import DataSinkQueue
 
 class SerialDataHandler:
     data_sink_vec = []
@@ -28,10 +29,10 @@ class SerialDataHandler:
         self.terminated = True
 
     def data_received(self, byte_arr):
-        line = str(byte_arr)
 
-        print("data received:" + line)
+        print("data received:" + str(byte_arr))
 
+        line = byte_arr.decode("ascii")
         line = line.replace('\r\n', '')
 
         for logger in self.data_sink_vec:
@@ -60,6 +61,7 @@ if __name__ == '__main__':
     log1 = DataLogger('acc.csv', 'acc:%f,%f,%f,', 'acc.x,acc.y,acc.z', flush_data=False)
     ser.add_datalogger(log1)
     ser.add_datalogger(DataLogger('gyr.csv', 'gyr:%f,%f,%f,', 'gyr.x,gyr.y,gyr.z', flush_data=False))
+    ser.add_datalogger(DataSinkQueue(len=100))
     #ser.add_datalogger(
     #    DataPlotter(title='gyroscope', format_str='gyr:%f,%f,%f,', use_timestamp=False, legend='gyr.x,gyr.y,gyr.z',
     #                update_interval_ms=500, max_samples=50))
