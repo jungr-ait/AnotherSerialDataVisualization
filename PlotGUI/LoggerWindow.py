@@ -14,7 +14,7 @@ def create_textfield(parent, lbl_text, default_text):
 
 
 
-class WindowLogger(tk.Toplevel):
+class LoggerWindow(tk.Toplevel):
     Source = None
 
     def __init__(self, parent, source=None, title= "I am a WindowLogger!"):
@@ -126,7 +126,7 @@ if __name__ == '__main__':
     root = tk.Tk()  # first toplevel window
     root.title("Root")
     root.geometry("100x100")
-    w = WindowLogger(root)
+    w = LoggerWindow(root)
 
 
     from logger.SerialDataHandler import SerialDataHandler
