@@ -11,12 +11,9 @@ from logger.TSDataSource import TSDataSource
 
 
 class MockSource(ICyclic, TSDataSource):
-    data_sink_map = {}  # thread safe access to map ensured
-    map_lock = None
     def __init__(self, rate_ms = 500, prefix=''):
         ICyclic.__init__(self,rate_ms)
         TSDataSource.__init__(self)
-        self.map_lock = threading.Lock()
 
         self.prefix = prefix
         self.set_continue()

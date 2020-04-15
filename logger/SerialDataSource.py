@@ -8,7 +8,9 @@ from logger.IDataSink import IDataSink
 from logger.DataSinkQueue import DataSinkQueue
 from logger.TSDataSource import TSDataSource
 
-class SerialDataHandler(TSDataSource):
+
+
+class SerialDataSource(TSDataSource):
     def __init__(self, port, baud_rate, timeout):
         super().__init__()
         # https://stackoverflow.com/a/46810180
@@ -39,7 +41,7 @@ class SerialDataHandler(TSDataSource):
 
 
 if __name__ == '__main__':
-    ser = SerialDataHandler(port='/dev/ttyUSB0', baud_rate=115200, timeout=1)
+    ser = SerialDataSource(port='/dev/ttyUSB0', baud_rate=115200, timeout=1)
     log1 = DataLogger('acc.csv', 'acc:%f,%f,%f,', 'acc.x,acc.y,acc.z', flush_data=False)
     print('ID of log1 ' + str(log1.ID));
     log2 = DataLogger('acc.csv', 'acc:%f,%f,%f,', 'acc.x,acc.y,acc.z', flush_data=False)
@@ -56,10 +58,6 @@ if __name__ == '__main__':
     print("remove a sink")
     ser.remove_sink(log1)
     ser.remove_sink(int(2))
-
-    #ser.add_datalogger(
-    #    DataPlotter(title='gyroscope', format_str='gyr:%f,%f,%f,', use_timestamp=False, legend='gyr.x,gyr.y,gyr.z',
-    #                update_interval_ms=500, max_samples=50))
     ser.stop()
 
 
