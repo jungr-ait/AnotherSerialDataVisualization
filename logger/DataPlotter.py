@@ -2,7 +2,6 @@ import time
 import threading
 from logger.DataFormatParser import DataFormatParser
 from logger.MockSource import MockSource
-import numpy as np
 import matplotlib.pyplot as plt
 
 
@@ -11,16 +10,16 @@ class DataPlotter(DataFormatParser):
     data = []
     data_lock = None
     num_samples = 0
-    def __init__(self, title="", format_str="%f,%f,%f",
-                 use_timestamp=False, legend="", update_interval_ms=100, max_samples=200):
+    def __init__(self, title="title", format_str="%f,%f,%f",
+                 use_timestamp=False, legend='', max_samples=200):
         DataFormatParser.__init__(self, format_str=format_str)
 
         self.data_lock = threading.Lock()
         self.title = title
         self.legend = legend
-        self.update_interval = update_interval_ms
+
         self.use_timestamp = use_timestamp  # specifies wheater first entry is timestamp
-        self.max_samples = max_samples
+        self.max_samples = int(max_samples)
 
 
         self.num_axis = format_str.count('%')
@@ -29,8 +28,12 @@ class DataPlotter(DataFormatParser):
 
 
         self.fig = plt.figure(figsize=(10, 5), dpi=50)
-        self.fig.set_label("over time")
+        self.fig.suptitle(title, fontsize=16)
+        self.fig.set_label("over time")#
         self.ax = self.fig.add_subplot(111)
+
+    def __del__(self):
+        plt.close(self.fig)
 
     def clear_data(self):
         with self.data_lock:
@@ -67,7 +70,7 @@ class DataPlotter(DataFormatParser):
 
         self.ax.grid()
         self.ax.legend(shadow=True, loc='upper left')
-        self.fig.tight_layout()
+        #self.fig.tight_layout()
         plt.pause(1e-6) # The pause is needed because the GUI events happen while the main code is sleeping, including drawing
 
 
@@ -80,7 +83,7 @@ class DataPlotter(DataFormatParser):
                     self.data[index].append(val)
                     l = len(self.data[index])
                     if l > self.max_samples:
-                        del self.data[index][0:10]
+                        del self.data[index][0] #:round(self.max_samples/4)]
 
                     index = index + 1
 
@@ -92,17 +95,22 @@ class DataPlotter(DataFormatParser):
 if __name__ == '__main__':
     use_timestamp = True
     format_str= '%f,%f,%f,%f,%f'
-    mock = MockSource(rate_ms=200, format_str=format_str, add_timestamp=use_timestamp)
-    plotter = DataPlotter(max_samples=50, format_str=format_str, use_timestamp=use_timestamp)
+    mock = MockSource(rate_ms=100, format_str=format_str, add_timestamp=use_timestamp)
+    plotter1 = DataPlotter(max_samples=50, format_str=format_str, use_timestamp=use_timestamp)
 
-    mock.add_sink(plotter)
+    plotter2 = DataPlotter(max_samples=50, format_str=format_str, use_timestamp=use_timestamp)
+
+    mock.add_sink(plotter1)
+    mock.add_sink(plotter2)
     print('Let the Mock produce')
     mock.start()
 
     for i in range(0,20):
         print('main thread rests a bit....')
         time.sleep(1)
-        plotter.plot_figure()
+        plotter1.plot_figure()
+        time.sleep(1)
+        plotter2.plot_figure()
 
 
     print('stop the Mock')
