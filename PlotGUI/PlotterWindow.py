@@ -29,7 +29,6 @@ class PlotterWindow(tk.Toplevel):
         self.quit()
 
     def setup(self):
-        """Calls methods to setup the user interface."""
         self.init_menu()
         self.create_widgets()
         self.setup_layout()

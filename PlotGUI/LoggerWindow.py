@@ -2,6 +2,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 from PlotGUI.LoggerModel import LoggerModel
+from PlotGUI.InfoWindow import InfoWindow
 from logger.IDataSource import IDataSource
 
 class LoggerWindow(tk.Toplevel):
@@ -17,9 +18,19 @@ class LoggerWindow(tk.Toplevel):
 
         
     def setup(self):
-        """Calls methods to setup the user interface."""
+        self.init_menu()
         self.create_widgets()
         self.setup_layout()
+
+    def init_menu(self):
+        self.menu = tk.Menu(self)
+        self.config(menu=self.menu)
+
+        ## HELPMENU
+        helpmenu = tk.Menu(self.menu)
+        self.menu.add_cascade(label="Help", menu=helpmenu)
+        helpmenu.add_command(label="About...", command=self.on_About)
+        helpmenu.add_command(label="Exit", command=self.destroy)
 
     def create_widgets(self):
         ## MainFrame:
@@ -83,6 +94,11 @@ class LoggerWindow(tk.Toplevel):
 
         pass
 
+    def on_About(self):
+        with open("LoggerWindowAbout.txt") as f:
+            info_str = f.read()
+            self.info_window = InfoWindow(self, str(info_str))
+
     def on_btn_FindFile(self):
         print("button find file:")
         filename = asksaveasfilename(filetypes = (("csv files","*.csv"),("all files","*.*")))
@@ -117,7 +133,7 @@ if __name__ == '__main__':
 
     from logger.MockSource import MockSource
 
-    w.Source = MockSource(500, prefix='')
+    w.Source = MockSource(500, format_str="%f,%f,%f")
     w.Source.start()
     root.mainloop()
     print("root is dead")
