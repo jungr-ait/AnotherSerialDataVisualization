@@ -3,6 +3,7 @@ import tkinter.ttk as ttk
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 from tkinter import messagebox
 from PlotGUI.PlotterModel import PlotterModel
+from PlotGUI.InfoWindow import InfoWindow
 from logger.IDataSource import IDataSource
 from logger.DataSinkQueue import DataSinkQueue
 
@@ -41,7 +42,7 @@ class PlotterWindow(tk.Toplevel):
         helpmenu = tk.Menu(self.menu)
         self.menu.add_cascade(label="Help", menu=helpmenu)
         helpmenu.add_command(label="About...", command=self.on_About)
-        helpmenu.add_command(label="Exit", command=self.quit)
+        helpmenu.add_command(label="Exit", command=self.destroy)
 
     def create_widgets(self):
         ## MainFrame:
@@ -127,7 +128,8 @@ class PlotterWindow(tk.Toplevel):
     def on_About(self):
         with open("PlotterWindowAbout.txt") as f:
             info_str = f.read()
-            tk.messagebox.showinfo("About", message=str(info_str), icon='question')
+            self.info_window = InfoWindow(self, str(info_str))
+
 
 
     def on_btn_Pause(self):
