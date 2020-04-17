@@ -15,14 +15,9 @@ class SerialCOM_Widget(tk.Frame):
         ## SERIALCONFIGFRAME
         ### widgets
         self.cb_port = ttk.Combobox(self.SerialConfigFrame, values=serial_device_list())
-        # self.cb_port.pack()
-        self.cb_port.bind('<<ComboboxSelected>>', self.on_port_select)  # assign function to combobox
         self.cb_port.current(0)
         self.cb_baud = ttk.Combobox(self.SerialConfigFrame, values=serial_common_baud_rate_list())
-        # self.cb_baud.pack()
         self.cb_baud.current(0)
-        # https://stackoverflow.com/a/41189486
-        self.cb_baud.bind('<<ComboboxSelected>>', self.on_baudrate_select)  # assign function to combobox
 
         self.btn_SerialConnect_text = tk.StringVar()  # state that will change
         self.btn_SerialConnect_text.set("Open")
@@ -36,36 +31,46 @@ class SerialCOM_Widget(tk.Frame):
         self.cb_baud.grid(row=0, column=2, columnspan=2)
         self.btn_SerialConnect.grid(row=0, column=4)
 
-    ## SERIALCONFIGFRAME
-    def on_port_select(self,event=None):
-        #print("event.widget:", event.widget.get())
-        print("comboboxes: ", self.cb_port.get())
-
-    def on_baudrate_select(self,event=None):
-        #print("event.widget:", event.widget.get())
-        print("comboboxes: ", self.cb_baud.get())
 
     def on_btn_SerialConnect(self):
-        print("button state:", self.btn_SerialConnect_text.get())
         if  self.btn_SerialConnect_text.get() == "Open":
-            # if successful allow us to close the serial...
-            try:
-                self.DataSource = SerialDataSource(self.cb_port.get(), self.cb_baud.get())
+            if self.open_serial():
                 self.btn_SerialConnect_text.set("Close")
-                self.DataSource.start()
-            except Exception:
-                showerror(title="Error", message="Invalid serial port configuration")
-
-
         else:
-            self.DataSource.stop()
-            self.DataSource = None
+            self.close_serial()
             self.btn_SerialConnect_text.set("Open")
+
+
+    def open_serial(self):
+        try:
+            self.DataSource = SerialDataSource(self.cb_port.get(), self.cb_baud.get())
+            self.DataSource.start()
+            self.serial_port_opened()
+            return True
+        except Exception as e:
+            print('open serial: ' + str(e))
+            showerror(title="Error", message="Invalid serial port configuration")
+            return False
+
+
+    def close_serial(self):
+        if self.DataSource is not None:
+            self.DataSource.stop()
+            self.serial_port_closed()
+            self.DataSource = None
+
+
+    def serial_port_opened(self):
+        pass  # hook for child classes
+
+
+    def serial_port_closed(self):
+        pass  # hook for child classes
+
 
 
 if __name__ == "__main__":
     root = tk.Tk()
     root.title('SerialCOM_Widget - Test')
-    #root.geometry("480x300")
     SerialCOM_Widget(root)
     root.mainloop()
