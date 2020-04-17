@@ -65,6 +65,7 @@ class SerialCOM_Widget(tk.Frame):
 
 if __name__ == "__main__":
     root = tk.Tk()
+    root.title('SerialCOM_Widget - Test')
     #root.geometry("480x300")
     SerialCOM_Widget(root)
     root.mainloop()
