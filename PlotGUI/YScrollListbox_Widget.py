@@ -31,7 +31,6 @@ class YScrollListbox_Widget(tk.Frame):
                 self.lst.delete(0, self.lst.size() - self.buffer_size)
 
 
-
 if __name__ == "__main__":
     root = tk.Tk()
     root.title('YScrollListbox_Widget - Test')
