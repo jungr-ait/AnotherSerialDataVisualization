@@ -16,9 +16,9 @@ class PlotterModel():
         return self.plotter
 
     def close(self):
-        del self.plotter
-        self.plotter = None
-        pass
+        if self.plotter is not None:
+            del self.plotter
+            self.plotter = None
 
     def get(self):
         return self.plotter

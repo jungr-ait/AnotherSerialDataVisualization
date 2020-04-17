@@ -1,5 +1,6 @@
 import tkinter as tk
 import tkinter.ttk as ttk
+import time
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 from tkinter import messagebox
 from PlotGUI.PlotterModel import PlotterModel
@@ -15,18 +16,20 @@ class PlotterWindow(tk.Toplevel):
         tk.Toplevel.__init__(self, parent)  # instead of super
         self.title(title)
         self.setup()
-        self.parent = parent
         self.Model = PlotterModel(self)
         self.Source = source
         self.after_id = None
         self.run = True
+        self.protocol("WM_DELETE_WINDOW", self.close_window)
 
+    def close_window(self):
 
-    def __del__(self):
         self.run = False
         if self.after_id is not None:
             self.after_cancel(self.after_id)
-        self.quit()
+        self.Model.close()
+        time.sleep(0.1)
+        self.destroy()
 
     def setup(self):
         self.init_menu()
@@ -166,14 +169,16 @@ class PlotterWindow(tk.Toplevel):
 
     def refresh_plot(self):
         #https://riptutorial.com/tkinter/example/22870/-after--
-        if (self.txtbtn_Create.get() == "Close Plotter") & (self.txtbtn_Pause.get() == "Pause"):
+        if (self.txtbtn_Create.get() == "Close Plotter") & (self.txtbtn_Pause.get() == "Pause") & self.run:
             self.Model.periodic_call()
-            self.after_id =self.after(int(self.cb_UpdateInterval.get()), self.refresh_plot)
+            if self.run:
+                self.after_id =self.after(int(self.cb_UpdateInterval.get()), self.refresh_plot)
 
 
 if __name__ == '__main__':
     root = tk.Tk()  # first toplevel window
     root.title("Root")
+    root.protocol
     root.geometry("100x100")
     w = PlotterWindow(root)
 

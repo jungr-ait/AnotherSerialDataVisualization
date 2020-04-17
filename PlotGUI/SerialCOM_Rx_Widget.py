@@ -23,7 +23,7 @@ class SerialCOM_Rx_Widget(SerialCOM_Widget):
         self.btn_RxDataViewPause_text = tk.StringVar()  # state that will change
         self.btn_RxDataViewPause_text.set('Pause')
         self.btn_RxDataViewPause = ttk.Button(self.LowerFrame, textvariable=self.btn_RxDataViewPause_text,
-                             command=self.on_delete_RxDataView)
+                             command=self.on_pause_RxDataView)
 
 
         ## SERIALCONFIGFRAME
@@ -43,10 +43,13 @@ class SerialCOM_Rx_Widget(SerialCOM_Widget):
         self.grid_columnconfigure(1, weight=1)
 
 
-    def __del__(self):
+    def close_window(self):
         self.refresh_view = False
+
         if self.after_id is not None:
             self.after_cancel(self.after_id)
+        self.DataSink = None
+        self.close_serial()
         self.quit()
 
 
@@ -65,9 +68,10 @@ class SerialCOM_Rx_Widget(SerialCOM_Widget):
 
     def refresh(self):
         #https://riptutorial.com/tkinter/example/22870/-after--
-        if (self.refresh_view) & (self.DataSink is not None):
-            while self.DataSink.available():
-                self.YScrollListbox.append_line(self.DataSink.data_queue.get())
+        if self.DataSink is not None:
+            if self.refresh_view:
+                while self.DataSink.available():
+                    self.YScrollListbox.append_line(self.DataSink.data_queue.get())
 
             self.after_id = self.after(self.refresh_rate_ms, self.refresh)
 
@@ -80,8 +84,8 @@ class SerialCOM_Rx_Widget(SerialCOM_Widget):
 
 
     def serial_port_closed(self):
-        self.DataSource.remove_sink(self.DataSink)
-
+        del self.DataSource
+        self.DataSource = None
 
 
 

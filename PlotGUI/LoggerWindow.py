@@ -1,5 +1,6 @@
 import tkinter as tk
 import tkinter.ttk as ttk
+import time
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 from PlotGUI.LoggerModel import LoggerModel
 from PlotGUI.InfoWindow import InfoWindow
@@ -15,8 +16,14 @@ class LoggerWindow(tk.Toplevel):
         self.parent = parent
         self.Model = LoggerModel(self)
         self.Source = source
+        self.protocol("WM_DELETE_WINDOW", self.close_window)
 
-        
+    def close_window(self):
+        if self.Model is not None:
+            self.Model.close()
+        time.sleep(0.1)
+        self.destroy()
+
     def setup(self):
         self.init_menu()
         self.create_widgets()
@@ -110,18 +117,18 @@ class LoggerWindow(tk.Toplevel):
     def on_btn_Create(self):
         print("button state:", self.txtbtn_Create.get())
         if  self.txtbtn_Create.get() == "Create Logger":
-            self.Model.create_logger(self.txt_Filename.get(), self.txt_Format.get(),
+            self.Model.create(self.txt_Filename.get(), self.txt_Format.get(),
                                      self.txt_Header.get(), self.checkvar_flush.get())
             if isinstance(self.Source, IDataSource):
-                self.Source.add_sink(self.Model.get_logger())
+                self.Source.add_sink(self.Model.get())
 
             self.txtbtn_Create.set("Close Logger")
         else: 
             # Close logger:
             self.txtbtn_Create.set("Create Logger")
             if isinstance(self.Source, IDataSource):
-                self.Source.remove_sink(self.Model.get_logger())
-            self.Model.close_logger()
+                self.Source.remove_sink(self.Model.get())
+            self.Model.close()
 
 
 if __name__ == '__main__':
