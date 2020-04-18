@@ -16,6 +16,7 @@ from logger.DataSinkQueue import DataSinkQueue
 from PlotGUI.LoggerWindow import LoggerWindow
 from PlotGUI.PlotterWindow import PlotterWindow
 from PlotGUI.SerialCOM_Rx_Widget import SerialCOM_Rx_Widget
+import configparser
 import time
 
 class MainGUI(tk.Tk):  # a tk.Toplevel
@@ -37,6 +38,39 @@ class MainGUI(tk.Tk):  # a tk.Toplevel
 
     def __del__(self):
         self.quit()
+
+    def add_to_config(self, section):
+        section['Serial'] = {}
+        self.SerialCOM_Rx.add_to_config(section['Serial'])
+        index = 0
+        for i in self.PlotWindowList:
+            section['Plotter'+str(index)] = {}
+            i.add_to_config(section['Plotter'+str(index)])
+            index += 1
+        index = 0
+        for i in self.LogWindowList:
+            section['Logger'+str(index)] = {}
+            i.add_to_config(section['Logger'+str(index)])
+            index += 1
+
+    def load_from_config(self, section):
+        self.SerialCOM_Rx.load_from_config(section['Serial'])
+        self.SerialCOM_Rx.on_btn_SerialConnect()
+
+        time.sleep(0.2)
+        for key in section:
+            print(key)
+            if key.find('Plotter') > -1:
+                w = self.on_btn_CreatePlotter()
+                w.load_from_config(section[key])
+                w.on_btn_Create()
+
+            if key.find('Logger') > -1:
+                w = self.on_btn_CreateLogger()
+                w.load_from_config(section[key])
+                w.on_btn_Create()
+
+        print('loading config section done!')
 
     def close_window(self):
         self.SerialCOM_Rx.close_window()
@@ -107,12 +141,25 @@ class MainGUI(tk.Tk):  # a tk.Toplevel
 
 
     def OpenFile(self):
-        name = askopenfilename()
-        print(name)
+        filename = askopenfilename(title = "Select Config file", filetypes = (("ini files","*.ini"),("all files","*.*")))
+        print(filename)
+        config = configparser.ConfigParser()
+        config.read(filename)
+        print('Load config file....')
+        self.load_from_config(config)
 
     def SaveAs(self):
-        name = asksaveasfilename()
-        print(name)
+        filename = asksaveasfilename(title = "Select Config file", filetypes = (("ini files","*.ini"),("all files","*.*")))
+        print(filename)
+        config = configparser.ConfigParser()
+
+        self.add_to_config(config)
+        print('Save config file....')
+        with open(filename, 'w') as configfile:
+            config.write(configfile)
+            configfile.close()
+
+
 
     ## HELPMENU
     def About(self):
@@ -134,6 +181,7 @@ class MainGUI(tk.Tk):  # a tk.Toplevel
             w = LoggerWindow(self)
             w.Source = data_source
             self.LogWindowList.append(w)
+            return w
 
 
     def on_btn_CreatePlotter(self):
@@ -142,6 +190,7 @@ class MainGUI(tk.Tk):  # a tk.Toplevel
             w = PlotterWindow(self)
             w.Source = data_source
             self.PlotWindowList.append(w)
+            return w
 
 
 
