@@ -10,22 +10,18 @@ from tkinter import ttk
 from tkinter.filedialog import askopenfilename
 from tkinter.filedialog import asksaveasfilename
 from tkinter import messagebox
-from logger.serial_utils import *
-from logger.SerialDataSource import SerialDataSource
-from logger.DataSinkQueue import DataSinkQueue
 from PlotGUI.LoggerWindow import LoggerWindow
 from PlotGUI.PlotterWindow import PlotterWindow
 from PlotGUI.SerialCOM_Rx_Widget import SerialCOM_Rx_Widget
 import configparser
 import time
 
+
 class MainGUI(tk.Tk):  # a tk.Toplevel
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
         self.title("MainGUI")
         self.root = self
-        #self.ContentFrame = ttk.Frame(self, padding=(3, 3, 12, 12))
-        #self.ContentFrame.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.setup()
 
         self.PlotWindowList = []
@@ -44,20 +40,21 @@ class MainGUI(tk.Tk):  # a tk.Toplevel
         self.SerialCOM_Rx.add_to_config(section['Serial'])
         index = 0
         for i in self.PlotWindowList:
-            section['Plotter'+str(index)] = {}
-            i.add_to_config(section['Plotter'+str(index)])
-            index += 1
+            if i.run: # check if window is alive
+                section['Plotter'+str(index)] = {}
+                i.add_to_config(section['Plotter'+str(index)])
+                index += 1
         index = 0
         for i in self.LogWindowList:
-            section['Logger'+str(index)] = {}
-            i.add_to_config(section['Logger'+str(index)])
-            index += 1
+            if i.run:  # check if window is alive
+                section['Logger'+str(index)] = {}
+                i.add_to_config(section['Logger'+str(index)])
+                index += 1
 
     def load_from_config(self, section):
         self.SerialCOM_Rx.load_from_config(section['Serial'])
         self.SerialCOM_Rx.on_btn_SerialConnect()
 
-        time.sleep(0.2)
         for key in section:
             print(key)
             if key.find('Plotter') > -1:
@@ -75,16 +72,17 @@ class MainGUI(tk.Tk):  # a tk.Toplevel
     def close_window(self):
         self.SerialCOM_Rx.close_window()
         for i in self.PlotWindowList:
-            i.close_window()
+            if i.run:
+                i.close_window()
 
         for i in self.LogWindowList:
-            continue
+            if i.run:
+                i.close_window()
 
         time.sleep(0.1)
         self.destroy()
 
     def setup(self):
-        """Calls methods to setup the user interface."""
         self.init_menu()
         self.create_widgets()
         self.setup_layout()
@@ -159,12 +157,9 @@ class MainGUI(tk.Tk):  # a tk.Toplevel
             config.write(configfile)
             configfile.close()
 
-
-
     ## HELPMENU
     def About(self):
-        print("This is a simple example of a menu")
-
+        print("Please check the readme")
 
 
     def get_IDataSource(self):

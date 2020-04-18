@@ -18,21 +18,24 @@ class LoggerWindow(tk.Toplevel):
         self.Model = LoggerModel(self)
         self.Source = source
         self.protocol("WM_DELETE_WINDOW", self.close_window)
+        self.run = True
 
     def add_to_config(self, section):
         fmt = self.txtvar_Format.get().replace('%', '%%')
         section['format_str'] = fmt
         section['header'] = self.txtvar_Header.get()
         section['filename'] = self.txtvar_Filename.get()
+        section['flush'] = str(self.checkvar_flush.get())
 
     def load_from_config(self, section):
         fmt = section.get('format_str', '%%f,%%f,%%f')
         self.txtvar_Format.set(fmt.replace('%%', '%'))
         self.txtvar_Header.set(section.get('header', 'x,y,z'))
         self.txtvar_Filename.set(section.get('filename', 'log.csv'))
-
+        self.checkvar_flush.set(section.getboolean('flush', fallback=True))
 
     def close_window(self):
+        self.run = False
         if self.Model is not None:
             self.Model.close()
         time.sleep(0.1)

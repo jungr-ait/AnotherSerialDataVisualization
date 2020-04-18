@@ -14,8 +14,6 @@
 
 - [tkDocs - grid](https://tkdocs.com/tutorial/grid.html)
 - [Model View Controller using Tkinter ](https://gist.github.com/ReddyKilowatt/5d0bfedbe9a92a8f50cd948ab51683ee)
-- [as]()
-- [as]()
 
 
 ## Basic concepts
@@ -40,6 +38,7 @@ In the `DataPlotter`, two widgets are shown, one to specify the max number of sa
  to the buffer in the IDataSink, which is our DataPlotter, creating the figure.
  
 - format_str: scanf string to parsed
+- usetimestamp: specifies if the first element in <format_str> is a timestamp (x-axis)
 - title: title of the figure
 - legend: how the axis should be labeled
 - max_sample: reduces the number of samples in the figure, dropping oldest ones

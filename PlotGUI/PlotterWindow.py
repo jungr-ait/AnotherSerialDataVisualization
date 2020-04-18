@@ -29,6 +29,7 @@ class PlotterWindow(tk.Toplevel):
         section['legend'] = self.txtvar_Legend.get()
         section['interval_ms'] = str( self.cb_UpdateInterval.get())
         section['max_samples'] = str(self.cb_MaxSample.get())
+        section['use_timestamp'] = str(self.checkvar_usetimestamp.get())
 
     def load_from_config(self, section):
         fmt = section.get('format_str', '%%f,%%f,%%f')
@@ -37,7 +38,7 @@ class PlotterWindow(tk.Toplevel):
         self.txtvar_Legend.set(section.get('legend', 'x,y,z'))
         self.cb_UpdateInterval.set(int(section.get('buffer_size', '100')))
         self.cb_MaxSample.set(int(section.get('interval_ms', '100')))
-
+        self.checkvar_usetimestamp.set(section.getboolean('use_timestamp', fallback=True))
 
     def close_window(self):
 
@@ -97,7 +98,7 @@ class PlotterWindow(tk.Toplevel):
 
         self.checkvar_usetimestamp = tk.BooleanVar()
         self.checkvar_usetimestamp.set(False)
-        self.check_usetimestamp = ttk.Checkbutton(self.MainFrame, text="usetimestamp", variable=self.checkvar_usetimestamp, onvalue=True)
+        self.check_usetimestamp = ttk.Checkbutton(self.MainFrame, text="use timestamp", variable=self.checkvar_usetimestamp, onvalue=True)
 
         self.txtbtn_Create = tk.StringVar()   # state that will change from Create to Close
         self.txtbtn_Create.set("Create Plotter")
