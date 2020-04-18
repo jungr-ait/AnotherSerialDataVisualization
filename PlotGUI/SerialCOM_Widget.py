@@ -3,6 +3,7 @@ from tkinter import ttk
 from logger.serial_utils import *
 from logger.SerialDataSource import SerialDataSource
 from tkinter.messagebox import showerror
+import configparser
 
 # https://stackoverflow.com/a/30489525
 class SerialCOM_Widget(tk.Frame):
@@ -30,6 +31,14 @@ class SerialCOM_Widget(tk.Frame):
         self.cb_port.grid(row=0, column=0, columnspan=2)
         self.cb_baud.grid(row=0, column=2, columnspan=2)
         self.btn_SerialConnect.grid(row=0, column=4)
+
+    def add_to_config(self, section):
+        section['device'] = str(self.cb_port.get())
+        section['baud_rate'] = str(self.cb_baud.get())
+
+    def load_from_config(self, section):
+        self.cb_port.set(section.get('device', '/dev/ttyUSB0'))
+        self.cb_baud.set(section.get('baud_rate', '115200'))
 
 
     def on_btn_SerialConnect(self):

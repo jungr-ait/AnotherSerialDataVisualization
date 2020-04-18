@@ -5,6 +5,7 @@ from tkinter.filedialog import askopenfilename, asksaveasfilename
 from PlotGUI.LoggerModel import LoggerModel
 from PlotGUI.InfoWindow import InfoWindow
 from logger.IDataSource import IDataSource
+import configparser
 
 class LoggerWindow(tk.Toplevel):
     Source = None
@@ -17,6 +18,19 @@ class LoggerWindow(tk.Toplevel):
         self.Model = LoggerModel(self)
         self.Source = source
         self.protocol("WM_DELETE_WINDOW", self.close_window)
+
+    def add_to_config(self, section):
+        fmt = self.txtvar_Format.get().replace('%', '%%')
+        section['format_str'] = fmt
+        section['header'] = self.txtvar_Header.get()
+        section['filename'] = self.txtvar_Filename.get()
+
+    def load_from_config(self, section):
+        fmt = section.get('format_str', '%%f,%%f,%%f')
+        self.txtvar_Format.set(fmt.replace('%%', '%'))
+        self.txtvar_Header.set(section.get('header', 'x,y,z'))
+        self.txtvar_Filename.set(section.get('filename', 'log.csv'))
+
 
     def close_window(self):
         if self.Model is not None:
@@ -51,7 +65,7 @@ class LoggerWindow(tk.Toplevel):
 
         self.lbl_Header = ttk.Label(self.MainFrame, text="Header:")
         self.txtvar_Header  = tk.StringVar()
-        self.txtvar_Header .set('x,y,z')
+        self.txtvar_Header.set('x,y,z')
         self.txt_Header  = ttk.Entry(self.MainFrame, textvariable=self.txtvar_Header)
 
         self.lbl_Filename = ttk.Label(self.MainFrame, text="Filename:")

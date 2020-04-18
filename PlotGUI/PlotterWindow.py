@@ -7,7 +7,7 @@ from PlotGUI.PlotterModel import PlotterModel
 from PlotGUI.InfoWindow import InfoWindow
 from logger.IDataSource import IDataSource
 from logger.DataSinkQueue import DataSinkQueue
-
+import configparser
 
 
 class PlotterWindow(tk.Toplevel):
@@ -22,6 +22,23 @@ class PlotterWindow(tk.Toplevel):
         self.run = True
         self.protocol("WM_DELETE_WINDOW", self.close_window)
 
+    def add_to_config(self, section):
+        fmt = self.txtvar_Format.get().replace('%', '%%')
+        section['format_str'] = fmt
+        section['title'] = self.txtvar_Title.get()
+        section['legend'] = self.txtvar_Legend.get()
+        section['interval_ms'] = str( self.cb_UpdateInterval.get())
+        section['max_samples'] = str(self.cb_MaxSample.get())
+
+    def load_from_config(self, section):
+        fmt = section.get('format_str', '%%f,%%f,%%f')
+        self.txtvar_Format.set(fmt.replace('%%', '%'))
+        self.txtvar_Title.set(section.get('title', 'no title'))
+        self.txtvar_Legend.set(section.get('legend', 'x,y,z'))
+        self.cb_UpdateInterval.set(int(section.get('buffer_size', '100')))
+        self.cb_MaxSample.set(int(section.get('interval_ms', '100')))
+
+
     def close_window(self):
 
         self.run = False
@@ -30,6 +47,7 @@ class PlotterWindow(tk.Toplevel):
         self.Model.close()
         time.sleep(0.1)
         self.destroy()
+
 
     def setup(self):
         self.init_menu()
@@ -58,12 +76,12 @@ class PlotterWindow(tk.Toplevel):
 
         self.lbl_Title = ttk.Label(self.MainFrame, text="Title:")
         self.txtvar_Title  = tk.StringVar()
-        self.txtvar_Title .set('x,y,z')
+        self.txtvar_Title.set('')
         self.txt_Title  = ttk.Entry(self.MainFrame, textvariable=self.txtvar_Title)
 
         self.lbl_Legend = ttk.Label(self.MainFrame, text="Legend:")
         self.txtvar_Legend  = tk.StringVar()
-        self.txtvar_Legend .set('x,y,z')
+        self.txtvar_Legend.set('x,y,z')
         self.txt_Legend  = ttk.Entry(self.MainFrame, textvariable=self.txtvar_Legend)
 
         # update interval: drop down list
