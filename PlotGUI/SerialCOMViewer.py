@@ -17,10 +17,10 @@ import configparser
 import time
 
 
-class MainGUI(tk.Tk):  # a tk.Toplevel
+class SerialCOMViewer(tk.Tk):  # a tk.Toplevel
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
-        self.title("MainGUI")
+        self.title("SerialCOMViewer")
         self.root = self
         self.setup()
 
@@ -190,6 +190,6 @@ class MainGUI(tk.Tk):  # a tk.Toplevel
 
 
 if __name__ == '__main__':
-    app = MainGUI()
+    app = SerialCOMViewer()
     app.geometry("480x720")
     app.mainloop()

@@ -4,7 +4,7 @@ import tkinter.ttk as ttk
 import queue
 import random
 
-from logger.ICyclic import ICyclic
+from SourceSink.ICyclic import ICyclic
 
 
 class Producer(ICyclic):
