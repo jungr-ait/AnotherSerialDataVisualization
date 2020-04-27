@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from PlotGUI.SerialCOM_Widget import SerialCOM_Widget
 from PlotGUI.YScrollListbox_Widget import YScrollListbox_Widget
-from logger.DataSinkQueue import DataSinkQueue
+from SourceSink.DataSinkQueue import DataSinkQueue
 
 class SerialCOM_Rx_Widget(SerialCOM_Widget):
     def __init__(self, parent, refresh_rate_ms=100, *args, **kwargs):

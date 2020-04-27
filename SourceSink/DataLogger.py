@@ -1,6 +1,6 @@
 import csv
 import os
-from logger.DataFormatParser import DataFormatParser
+from SourceSink.DataFormatParser import DataFormatParser
 
 
 class DataLogger(DataFormatParser):

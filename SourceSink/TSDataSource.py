@@ -1,6 +1,6 @@
 import threading
-from logger.IDataSource import IDataSource
-from logger.IDataSink import IDataSink
+from SourceSink.IDataSource import IDataSource
+from SourceSink.IDataSink import IDataSink
 
 class TSDataSource(IDataSource):
     data_sink_map = {}  # thread safe access to map ensured

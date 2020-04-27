@@ -4,7 +4,7 @@ import time
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 from PlotGUI.LoggerModel import LoggerModel
 from PlotGUI.InfoWindow import InfoWindow
-from logger.IDataSource import IDataSource
+from SourceSink.IDataSource import IDataSource
 import configparser
 
 class LoggerWindow(tk.Toplevel):
@@ -141,7 +141,7 @@ class LoggerWindow(tk.Toplevel):
 
             self.txtbtn_Create.set("Close Logger")
         else: 
-            # Close logger:
+            # Close SourceSink:
             self.txtbtn_Create.set("Create Logger")
             if isinstance(self.Source, IDataSource):
                 self.Source.remove_sink(self.Model.get())
@@ -155,7 +155,7 @@ if __name__ == '__main__':
     w = LoggerWindow(root)
 
 
-    from logger.MockSource import MockSource
+    from SourceSink.MockSource import MockSource
 
     w.Source = MockSource(500, format_str="%f,%f,%f")
     w.Source.start()

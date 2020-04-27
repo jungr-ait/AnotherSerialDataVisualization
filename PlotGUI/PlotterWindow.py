@@ -5,8 +5,8 @@ from tkinter.filedialog import askopenfilename, asksaveasfilename
 from tkinter import messagebox
 from PlotGUI.PlotterModel import PlotterModel
 from PlotGUI.InfoWindow import InfoWindow
-from logger.IDataSource import IDataSource
-from logger.DataSinkQueue import DataSinkQueue
+from SourceSink.IDataSource import IDataSource
+from SourceSink.DataSinkQueue import DataSinkQueue
 import configparser
 
 
@@ -179,7 +179,7 @@ class PlotterWindow(tk.Toplevel):
             self.txtbtn_Create.set("Close Plotter") # toggle state
 
         else:
-            # Close logger:
+            # Close SourceSink:
             self.txtbtn_Create.set("Create Plotter")
 
             if isinstance(self.Source, IDataSource):
@@ -202,7 +202,7 @@ if __name__ == '__main__':
     w = PlotterWindow(root)
 
 
-    from logger.MockSource import MockSource
+    from SourceSink.MockSource import MockSource
 
     w.Source = MockSource(rate_ms=100)
     w.Source.start()

@@ -3,10 +3,10 @@ import serial
 import threaded_serial
 import threading
 import signal
-from logger.DataLogger import DataLogger
-from logger.IDataSink import IDataSink
-from logger.DataSinkQueue import DataSinkQueue
-from logger.TSDataSource import TSDataSource
+from SourceSink.DataLogger import DataLogger
+from SourceSink.IDataSink import IDataSink
+from SourceSink.DataSinkQueue import DataSinkQueue
+from SourceSink.TSDataSource import TSDataSource
 
 
 
@@ -25,9 +25,14 @@ class SerialDataSource(TSDataSource):
 
     def data_received(self, byte_arr):
         # decode bytes object to produce a string: https://stackoverflow.com/a/606199
-        line = byte_arr.decode("ascii")
-        line = line.replace('\r\n', '')
-        self.distribute_data(line)
+        if len(byte_arr) > 1:
+            try:
+                line = byte_arr.decode("ascii")
+                line = line.replace('\r\n', '')
+                self.distribute_data(line)
+            except Exception as e:
+                print('Error in decoding line' + str(byte_arr))
+                pass
 
     def start(self):
         self.threaded.start()

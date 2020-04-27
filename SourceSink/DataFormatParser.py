@@ -1,5 +1,5 @@
 import scanf
-from logger.IDataSink import  IDataSink
+from SourceSink.IDataSink import  IDataSink
 
 
 class DataFormatParser(IDataSink):

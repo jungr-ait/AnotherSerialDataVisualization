@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
-from logger.serial_utils import *
-from logger.SerialDataSource import SerialDataSource
+from SourceSink.serial_utils import *
+from SourceSink.SerialDataSource import SerialDataSource
 from tkinter.messagebox import showerror
 import configparser
 

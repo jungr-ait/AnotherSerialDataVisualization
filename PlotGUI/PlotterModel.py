@@ -1,4 +1,4 @@
-from logger.DataPlotter import DataPlotter
+from SourceSink.DataPlotter import DataPlotter
 
 class PlotterModel():
     plotter = None

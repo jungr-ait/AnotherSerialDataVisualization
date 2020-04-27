@@ -1,5 +1,5 @@
 import queue
-from logger.IDataSink import  IDataSink
+from SourceSink.IDataSink import  IDataSink
 
 
 class DataSinkQueue(IDataSink):

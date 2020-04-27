@@ -1,4 +1,4 @@
-from logger.DataLogger import DataLogger
+from SourceSink.DataLogger import DataLogger
 
 
 class LoggerModel():

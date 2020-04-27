@@ -1,7 +1,7 @@
 import time
 import threading
-from logger.DataFormatParser import DataFormatParser
-from logger.MockSource import MockSource
+from SourceSink.DataFormatParser import DataFormatParser
+from SourceSink.MockSource import MockSource
 import matplotlib.pyplot as plt
 
 

@@ -4,10 +4,10 @@ import threaded_serial
 import threading
 import signal
 import random
-from logger.IDataSource import IDataSource
-from logger.IDataSink import IDataSink
-from logger.ICyclic import ICyclic
-from logger.TSDataSource import TSDataSource
+from SourceSink.IDataSource import IDataSource
+from SourceSink.IDataSink import IDataSink
+from SourceSink.ICyclic import ICyclic
+from SourceSink.TSDataSource import TSDataSource
 
 
 class MockSource(ICyclic, TSDataSource):
