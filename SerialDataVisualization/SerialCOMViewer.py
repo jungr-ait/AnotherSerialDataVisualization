@@ -10,9 +10,9 @@ from tkinter import ttk
 from tkinter.filedialog import askopenfilename
 from tkinter.filedialog import asksaveasfilename
 from tkinter import messagebox
-from PlotGUI.LoggerWindow import LoggerWindow
-from PlotGUI.PlotterWindow import PlotterWindow
-from PlotGUI.SerialCOM_Rx_Widget import SerialCOM_Rx_Widget
+from SerialDataVisualization.LoggerWindow import LoggerWindow
+from SerialDataVisualization.PlotterWindow import PlotterWindow
+from SerialDataVisualization.SerialCOM_Rx_Widget import SerialCOM_Rx_Widget
 import configparser
 import time
 

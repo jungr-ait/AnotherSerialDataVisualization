@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
-from PlotGUI.SerialCOM_Widget import SerialCOM_Widget
-from PlotGUI.YScrollListbox_Widget import YScrollListbox_Widget
+from SerialDataVisualization.SerialCOM_Widget import SerialCOM_Widget
+from SerialDataVisualization.YScrollListbox_Widget import YScrollListbox_Widget
 from SourceSink.DataSinkQueue import DataSinkQueue
 
 class SerialCOM_Rx_Widget(SerialCOM_Widget):

@@ -1,4 +1,4 @@
-from PlotGUI.SerialCOMViewer import SerialCOMViewer
+from SerialDataVisualization.SerialCOMViewer import SerialCOMViewer
 
 
 if __name__ == '__main__':

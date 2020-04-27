@@ -3,8 +3,8 @@ import tkinter.ttk as ttk
 import time
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 from tkinter import messagebox
-from PlotGUI.PlotterModel import PlotterModel
-from PlotGUI.InfoWindow import InfoWindow
+from SerialDataVisualization.PlotterModel import PlotterModel
+from SerialDataVisualization.InfoWindow import InfoWindow
 from SourceSink.IDataSource import IDataSource
 from SourceSink.DataSinkQueue import DataSinkQueue
 import configparser

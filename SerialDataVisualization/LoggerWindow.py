@@ -2,8 +2,8 @@ import tkinter as tk
 import tkinter.ttk as ttk
 import time
 from tkinter.filedialog import askopenfilename, asksaveasfilename
-from PlotGUI.LoggerModel import LoggerModel
-from PlotGUI.InfoWindow import InfoWindow
+from SerialDataVisualization.LoggerModel import LoggerModel
+from SerialDataVisualization.InfoWindow import InfoWindow
 from SourceSink.IDataSource import IDataSource
 import configparser
 
