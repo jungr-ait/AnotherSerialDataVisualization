@@ -36,8 +36,8 @@ class PlotterWindow(tk.Toplevel):
         self.txtvar_Format.set(fmt.replace('%%', '%'))
         self.txtvar_Title.set(section.get('title', 'no title'))
         self.txtvar_Legend.set(section.get('legend', 'x,y,z'))
-        self.cb_UpdateInterval.set(int(section.get('buffer_size', '100')))
-        self.cb_MaxSample.set(int(section.get('interval_ms', '100')))
+        self.cb_MaxSample.set(int(section.get('max_samples', '100')))
+        self.cb_UpdateInterval.set(int(section.get('interval_ms', '100')))
         self.checkvar_usetimestamp.set(section.getboolean('use_timestamp', fallback=True))
 
     def close_window(self):
