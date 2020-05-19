@@ -26,8 +26,7 @@ TODO
 
 In my opinion it is rather trivial to add an additional type of plot to the existing one. The lazy solution would be to directly modify the class `DataPlotter`.
 A cleaner solution is to derive from that class and modify the `PlotterModel.create(...)` method, e.g an additional parameter to specify the desired plot type.
-One nice example would be a pose including a trajectory (SE(3)) or an orientation (SO(3)) visualization. Maybe I will find some time  
-to play a bit.
+One nice example would be a pose including a trajectory (SE(3)) or an orientation (SO(3)) visualization. Maybe I will find some time to play a bit.
  
 If you want to be able to send data back to the connected device, a good starting point is the `SerialCOMViewer` widget and 
 the `SerialCOM_Widget` class. The later is using the `SerialDataSource` class that creates and holds the threaded `ThreadedSerialManager` to which
@@ -38,7 +37,10 @@ I hope that I could encourage you to make your hands dirty on my code ;)
 ## Requirements
 
 [TK - Ubuntu and Python 3](https://tkdocs.com/tutorial/install.html): `sudo apt-get install python3-tk`
-
+- pytransform3d
+- numpy
+- tkinter
+- matplotlib
  
  ## SerialCOMViewer
  
