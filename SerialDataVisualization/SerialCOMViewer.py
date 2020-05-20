@@ -12,6 +12,7 @@ from tkinter.filedialog import asksaveasfilename
 from tkinter import messagebox
 from SerialDataVisualization.LoggerWindow import LoggerWindow
 from SerialDataVisualization.PlotterWindow import PlotterWindow
+from SerialDataVisualization.Visualization3DWindow import Visualization3DWindow
 from SerialDataVisualization.SerialCOM_Rx_Widget import SerialCOM_Rx_Widget
 import configparser
 import time
@@ -24,8 +25,11 @@ class SerialCOMViewer(tk.Tk):  # a tk.Toplevel
         self.root = self
         self.setup()
 
+        # TODO: dictionary<key=type, val=list>
         self.PlotWindowList = []
         self.LogWindowList= []
+        self.VisOrientList = []
+        self.VisVectorList = []
         self.DataSource = None
         self.DataSinkQueue = None
         self.run_data_view = False
@@ -50,6 +54,19 @@ class SerialCOMViewer(tk.Tk):  # a tk.Toplevel
                 section['Logger'+str(index)] = {}
                 i.add_to_config(section['Logger'+str(index)])
                 index += 1
+        index = 0
+        for i in self.VisVectorList:
+            if i.run:  # check if window is alive
+                section['VisVector'+str(index)] = {}
+                i.add_to_config(section['VisVector'+str(index)])
+                index += 1
+        index = 0
+        for i in self.VisOrientList:
+            if i.run:  # check if window is alive
+                section['VisOrient'+str(index)] = {}
+                i.add_to_config(section['VisOrient'+str(index)])
+                index += 1
+
 
     def load_from_config(self, section):
         self.SerialCOM_Rx.load_from_config(section['Serial'])
@@ -66,7 +83,14 @@ class SerialCOMViewer(tk.Tk):  # a tk.Toplevel
                 w = self.on_btn_CreateLogger()
                 w.load_from_config(section[key])
                 w.on_btn_Create()
-
+            if key.find('VisVector') > -1:
+                w = self.on_btn_CreateVisVector()
+                w.load_from_config(section[key])
+                w.on_btn_Create()
+            if key.find('VisOrient') > -1:
+                w = self.on_btn_CreateVisOrient()
+                w.load_from_config(section[key])
+                w.on_btn_Create()
         print('loading config section done!')
 
     def close_window(self):
@@ -123,7 +147,14 @@ class SerialCOMViewer(tk.Tk):  # a tk.Toplevel
         self.btn_CreateLogger_text.set("Logger Window")
         self.btn_CreateLogger = ttk.Button(self.LoggerConfigFrame, textvariable=self.btn_CreateLogger_text,
                              command=self.on_btn_CreateLogger)
-
+        self.btn_CreateVisOrient_text = tk.StringVar()   # state that will change
+        self.btn_CreateVisOrient_text.set("Orientation Visualization")
+        self.btn_CreateVisOrient = ttk.Button(self.LoggerConfigFrame, textvariable=self.btn_CreateVisOrient_text,
+                             command=self.on_btn_CreateVisOrient)
+        self.btn_CreateVisVector_text = tk.StringVar()   # state that will change
+        self.btn_CreateVisVector_text.set("Vector Visualization")
+        self.btn_CreateVisVector = ttk.Button(self.LoggerConfigFrame, textvariable=self.btn_CreateVisVector_text,
+                             command=self.on_btn_CreateVisVector)
 
     def setup_layout(self):
         ## SERIALCONFIGFRAME
@@ -132,6 +163,8 @@ class SerialCOMViewer(tk.Tk):  # a tk.Toplevel
         self.LoggerConfigFrame.grid(column=0, row=1, columnspan=5, sticky="nesw")
         self.btn_CreatePlotter.grid(column=1, row=1, columnspan=2)
         self.btn_CreateLogger.grid(column=3, row=1, columnspan=2)
+        self.btn_CreateVisOrient.grid(column=1, row=2, columnspan=2)
+        self.btn_CreateVisVector.grid(column=3, row=2, columnspan=2)
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(2, weight=1)
         return
@@ -187,6 +220,21 @@ class SerialCOMViewer(tk.Tk):  # a tk.Toplevel
             self.PlotWindowList.append(w)
             return w
 
+    def on_btn_CreateVisOrient(self):
+        data_source = self.get_IDataSource()
+        if data_source is not None:
+            w = Visualization3DWindow(self, type="orientation")
+            w.Source = data_source
+            self.VisOrientList.append(w)
+            return w
+
+    def on_btn_CreateVisVector(self):
+        data_source = self.get_IDataSource()
+        if data_source is not None:
+            w = Visualization3DWindow(self, type="vector")
+            w.Source = data_source
+            self.VisVectorList.append(w)
+            return w
 
 
 if __name__ == '__main__':

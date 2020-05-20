@@ -91,12 +91,11 @@ class VectorPlot3D(DataFormatParser):
         self.ax.set_xlabel('x')
         self.ax.set_ylabel('y')
         self.ax.set_zlabel('z')
-        self.ax.set_aspect('equal')
-        scaling = np.array([getattr(self.ax, 'get_{}lim'.format(dim))() for dim in 'xyz']);
+
+        # https://stackoverflow.com/questions/8130823/set-matplotlib-3d-plot-aspect-ratio/12371373
+        scaling = np.array([getattr(self.ax, 'get_{}lim'.format(dim))() for dim in 'xyz'])
         self.ax.auto_scale_xyz(*[[np.min(scaling), np.max(scaling)]] * 3)
-        #self.ax.set_xlim3d(0, max(self.axis_length, self.ax.get_xlim3d()[1])*1.1)
-        #self.ax.set_ylim3d(0, max(self.axis_length, self.ax.get_ylim3d()[1])*1.1)
-        #self.ax.set_zlim3d(0, max(self.axis_length, self.ax.get_zlim3d()[1])*1.1)
+
 
         plt.pause(1e-6) # The pause is needed because the GUI events happen while the main code is sleeping, including drawing
 
