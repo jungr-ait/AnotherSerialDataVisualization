@@ -17,13 +17,13 @@ class Visualization3DWindow(tk.Toplevel):
     def __init__(self, parent, source=None, title= "Visualization3DWindow!", type="vector"):
         tk.Toplevel.__init__(self, parent)  # instead of super
         self.title(title)
-        self.setup()
         self.type = type
         self.vis = None
         self.Source = source
         self.after_id = None
         self.run = True
         self.protocol("WM_DELETE_WINDOW", self.close_window)
+        self.setup()
 
     def add_to_config(self, section):
         fmt = self.txtvar_Format.get().replace('%', '%%')
@@ -68,6 +68,8 @@ class Visualization3DWindow(tk.Toplevel):
         self.MainFrame = tk.ttk.Frame(self, padding=(10,5))
 
         ### widgets
+        self.lbl_Type = ttk.Label(self.MainFrame, text="Type:")
+        self.lbl_TypeVar = ttk.Label(self.MainFrame, text=self.type)
         self.lbl_Format = ttk.Label(self.MainFrame, text="Format:")
         self.txtvar_Format = tk.StringVar()
         self.txtvar_Format.set('%f,%f,%f')
@@ -106,10 +108,12 @@ class Visualization3DWindow(tk.Toplevel):
     def setup_layout(self):
         print('setup layout...')
         self.MainFrame.grid(         column=0, row=0, sticky="nesw")
-        self.lbl_Format.grid(        column=0, row=0, columnspan=1, sticky='e')
-        self.txt_Format.grid(        column=1, row=0, columnspan=1, sticky='w')
-        self.lbl_Title.grid(         column=0, row=1, columnspan=1, sticky='e')
-        self.txt_Title.grid(         column=1, row=1, columnspan=1, sticky='w')
+        self.lbl_Type.grid(          column=0, row=0, columnspan=1, sticky='e')
+        self.lbl_TypeVar.grid(       column=1, row=0, columnspan=1, sticky='w')
+        self.lbl_Format.grid(        column=0, row=1, columnspan=1, sticky='e')
+        self.txt_Format.grid(        column=1, row=1, columnspan=1, sticky='w')
+        self.lbl_Title.grid(         column=0, row=2, columnspan=1, sticky='e')
+        self.txt_Title.grid(         column=1, row=2, columnspan=1, sticky='w')
         self.lbl_MaxSample.grid(     column=0, row=3, columnspan=1, sticky='e')
         self.cb_MaxSample.grid(      column=1, row=3, columnspan=1, sticky='w')
         self.lbl_UpdateInterval.grid(column=0, row=4, columnspan=1, sticky='e')

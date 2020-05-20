@@ -84,7 +84,7 @@ class OrientationPlot(DataFormatParser):
 
 
 
-        plot_coordinate_reference_frame(self.ax, length=self.axis_length/10)
+        plot_coordinate_reference_frame(self.ax, length=self.axis_length/3)
         plot_coordinate_reference_frame(self.ax, length=self.axis_length, R=R)
 
 
