@@ -70,14 +70,14 @@ class OrientationPlot(DataFormatParser):
             if self.num_axis == 4:
                 q = np.zeros(4)
                 for i in range(0, self.num_axis):
-                    q[i] = data[i](len(data[i])-1)
+                    q[i] = data[i][len(data[i])-1]
 
 
                 R = matrix_from_quaternion(q)
             if self.num_axis == 9:
                 v_R = np.zeros(9)
                 for i in range(0, self.num_axis):
-                    v_R[i] = data[i](len(data[i])-1)
+                    v_R[i] = data[i][len(data[i])-1]
                 R = v_R.reshape((3,3))
         self.ax.clear()
 
@@ -93,9 +93,9 @@ class OrientationPlot(DataFormatParser):
         self.ax.set_ylabel('y')
         self.ax.set_zlabel('z')
 
-        self.ax.set_xlim3d(0, max(self.axis_length, self.ax.get_xlim3d()[1])*1.1)
-        self.ax.set_ylim3d(0, max(self.axis_length, self.ax.get_ylim3d()[1])*1.1)
-        self.ax.set_zlim3d(0, max(self.axis_length, self.ax.get_zlim3d()[1])*1.1)
+        self.ax.set_xlim3d(-1.1*self.axis_length, 1.1*self.axis_length)
+        self.ax.set_ylim3d(-1.1*self.axis_length, 1.1*self.axis_length)
+        self.ax.set_zlim3d(-1.1*self.axis_length, 1.1*self.axis_length)
 
         plt.pause(1e-6) # The pause is needed because the GUI events happen while the main code is sleeping, including drawing
 

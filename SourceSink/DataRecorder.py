@@ -41,16 +41,16 @@ class DataRecorder(IDataSink):
 
 if __name__ == '__main__':
     ser = SerialDataSource(port='/dev/ttyUSB0', baud_rate=115200, timeout=1)
-    rec = DataRecorder(filename="rec.txt", header='recording session')
+    rec = DataRecorder(filename="rec_orient.txt", header='recording session')
     ser.add_sink(rec)
 
 
     print('Lets record data')
     ser.start()
-    time.sleep(4)
+    time.sleep(10)
 
     print('main thread rests a bit....')
-    time.sleep(4)
+    time.sleep(10)
 
     print("remove a sink")
     ser.remove_sink(rec)

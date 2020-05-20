@@ -11,6 +11,8 @@ from SourceSink.IDataSink import IDataSink
 from SourceSink.ICyclic import ICyclic
 from SourceSink.TSDataSource import TSDataSource
 from SourceSink.DataPlotter import DataPlotter
+from SourceSink.VectorPlot3D import VectorPlot3D
+from SourceSink.OrientationPlot import OrientationPlot
 
 
 class PlaybackDataSource(ICyclic, TSDataSource):
@@ -39,16 +41,25 @@ class PlaybackDataSource(ICyclic, TSDataSource):
 
 
 if __name__ == '__main__':
-    mock = PlaybackDataSource(rate_ms=100, filename="rec.txt")
+    mock = PlaybackDataSource(rate_ms=10, filename="rec_orient.txt")
 
-    plotter1 = DataPlotter(max_samples=50, format_str="acc:%f,%f,%f")
+    plotter1 = DataPlotter(max_samples=1000, format_str="q_wxyz:%f,%f,%f,%f")
+    plotter2 = DataPlotter(max_samples=1000, format_str="acc:%f,%f,%f")
+    plotter3 = VectorPlot3D(format_str="acc:%f,%f,%f")
+    plotter4 = OrientationPlot(format_str="q_wxyz:%f,%f,%f,%f")
     mock.add_sink(plotter1)
+    mock.add_sink(plotter2)
+    mock.add_sink(plotter3)
+    mock.add_sink(plotter4)
     print('Lets play back')
     mock.start()
-    for i in range(0,100):
-        print('main thread rests a bit....')
-        time.sleep(0.1)
-        plotter1.plot_figure()
+    while mock.do_run:
+        #print('main thread rests a bit....')
+        #time.sleep(0.1)
+        #plotter1.plot_figure()
+        #plotter2.plot_figure()
+        #plotter3.plot_figure()
+        plotter4.plot_figure()
 
     print('stop the Mock')
     mock.stop()
