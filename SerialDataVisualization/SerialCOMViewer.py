@@ -223,16 +223,14 @@ class SerialCOMViewer(tk.Tk):  # a tk.Toplevel
     def on_btn_CreateVisOrient(self):
         data_source = self.get_IDataSource()
         if data_source is not None:
-            w = Visualization3DWindow(self, type="orientation")
-            w.Source = data_source
+            w = Visualization3DWindow(self, type="orientation", source=data_source)
             self.VisOrientList.append(w)
             return w
 
     def on_btn_CreateVisVector(self):
         data_source = self.get_IDataSource()
         if data_source is not None:
-            w = Visualization3DWindow(self, type="vector")
-            w.Source = data_source
+            w = Visualization3DWindow(self, type="vector", source=data_source)
             self.VisVectorList.append(w)
             return w
 

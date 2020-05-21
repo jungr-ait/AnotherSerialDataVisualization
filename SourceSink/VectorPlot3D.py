@@ -9,19 +9,24 @@ from SourceSink.drawing_utils import *
 class VectorPlot3D(DataFormatParser):
     t_vec = []
     data = []
+    timestamps = []
     data_lock = None
     num_samples = 0
     def __init__(self, title="title", format_str="%f,%f,%f",
-                 legend='', max_samples=200, axis_length=1.0):
+                 use_timestamp=False, max_samples=200, axis_length=1.0):
         DataFormatParser.__init__(self, format_str=format_str)
 
         self.data_lock = threading.Lock()
         self.title = title
-        self.legend = legend
+        self.use_timestamp = use_timestamp  # specifies if the first entry is timestamp
 
-        self.max_samples = int(max_samples)
+        self.max_samples = int(max_samples)  # for the sample covariance
         self.axis_length = max(0.01, axis_length)
         self.num_axis = format_str.count('%')
+
+        if use_timestamp:
+            self.num_axis = self.num_axis - 1
+
         assert(self.num_axis < 4)
         self.clear_data()
 
@@ -40,6 +45,7 @@ class VectorPlot3D(DataFormatParser):
     def clear_data(self):
         with self.data_lock:
             self.data = []
+            self.timestamps = []
             for i in range(0, self.num_axis):
                 row = []
                 self.data.append(row)
@@ -105,12 +111,18 @@ class VectorPlot3D(DataFormatParser):
             self.num_samples += 1
             with self.data_lock:
                 index = 0
+                data_index = 0
                 for val in arr:
-                    self.data[index].append(val)
-                    l = len(self.data[index])
-                    if l > self.max_samples:
-                        del self.data[index][0] #:round(self.max_samples/4)]
-
+                    if (self.use_timestamp == False ) or ((self.use_timestamp == True) and (index > 0)):
+                        self.data[data_index].append(val)
+                        l = len(self.data[data_index])
+                        if l > self.max_samples:
+                            del self.data[data_index][0] #:round(self.max_samples/4)]
+                        data_index = data_index  + 1
+                    else:
+                        self.timestamps.append(val)
+                        if len(self.timestamps) > self.max_samples:
+                            del self.timestamps[0] #:round(self.max_samples/4)]
                     index = index + 1
 
 
@@ -119,10 +131,11 @@ class VectorPlot3D(DataFormatParser):
 
 
 if __name__ == '__main__':
-    format_str= '%f,%f'
-    mock = MockSource(rate_ms=100, format_str=format_str)
-    plotter1 = VectorPlot3D(max_samples=50, format_str=format_str, axis_length=0.1)
-    plotter2 = VectorPlot3D(max_samples=200, format_str='%f')
+    format_str= '%f,%f,%f'
+    use_timestamp = False
+    mock = MockSource(rate_ms=100, format_str=format_str, add_timestamp=use_timestamp)
+    plotter1 = VectorPlot3D(max_samples=50, format_str=format_str, axis_length=0.1, use_timestamp=use_timestamp)
+    plotter2 = VectorPlot3D(max_samples=200, format_str='%f,%f', use_timestamp=use_timestamp)
 
     mock.add_sink(plotter1)
     mock.add_sink(plotter2)

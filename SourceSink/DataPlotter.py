@@ -18,7 +18,7 @@ class DataPlotter(DataFormatParser):
         self.title = title
         self.legend = legend
 
-        self.use_timestamp = use_timestamp  # specifies wheater first entry is timestamp
+        self.use_timestamp = use_timestamp  # specifies if the first entry is timestamp
         self.max_samples = int(max_samples)
 
         self.num_axis = format_str.count('%')

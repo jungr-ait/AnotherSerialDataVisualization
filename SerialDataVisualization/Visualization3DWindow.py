@@ -31,6 +31,7 @@ class Visualization3DWindow(tk.Toplevel):
         section['title'] = self.txtvar_Title.get()
         section['interval_ms'] = str( self.cb_UpdateInterval.get())
         section['max_samples'] = str(self.cb_MaxSample.get())
+        section['use_timestamp'] = str(self.checkvar_usetimestamp.get())
 
     def load_from_config(self, section):
         fmt = section.get('format_str', '%%f,%%f,%%f')
@@ -38,6 +39,7 @@ class Visualization3DWindow(tk.Toplevel):
         self.txtvar_Title.set(section.get('title', 'no title'))
         self.cb_MaxSample.set(int(section.get('max_samples', '100')))
         self.cb_UpdateInterval.set(int(section.get('interval_ms', '100')))
+        self.checkvar_usetimestamp.set(section.getboolean('use_timestamp', fallback=True))
 
     def close_window(self):
 
@@ -90,6 +92,10 @@ class Visualization3DWindow(tk.Toplevel):
         self.cb_MaxSample = ttk.Combobox(self.MainFrame, values=[50, 100, 500, 1000, 5000])
         self.cb_MaxSample.current(0)
 
+        self.checkvar_usetimestamp = tk.BooleanVar()
+        self.checkvar_usetimestamp.set(False)
+        self.check_usetimestamp = ttk.Checkbutton(self.MainFrame, text="use timestamp", variable=self.checkvar_usetimestamp, onvalue=True)
+
 
         self.txtbtn_Create = tk.StringVar()   # state that will change from Create to Close
         self.txtbtn_Create.set("Create Vis.")
@@ -112,6 +118,7 @@ class Visualization3DWindow(tk.Toplevel):
         self.lbl_TypeVar.grid(       column=1, row=0, columnspan=1, sticky='w')
         self.lbl_Format.grid(        column=0, row=1, columnspan=1, sticky='e')
         self.txt_Format.grid(        column=1, row=1, columnspan=1, sticky='w')
+        self.check_usetimestamp.grid(column=2, row=1, columnspan=1, sticky='e')
         self.lbl_Title.grid(         column=0, row=2, columnspan=1, sticky='e')
         self.txt_Title.grid(         column=1, row=2, columnspan=1, sticky='w')
         self.lbl_MaxSample.grid(     column=0, row=3, columnspan=1, sticky='e')
@@ -160,11 +167,13 @@ class Visualization3DWindow(tk.Toplevel):
             if self.type == "vector":
                 self.vis = VectorPlot3D(title=self.txt_Title.get(),
                               format_str=self.txt_Format.get(),
-                              max_samples=self.cb_MaxSample.get())
+                              max_samples=self.cb_MaxSample.get(),
+                              use_timestamp = self.checkvar_usetimestamp.get())
             elif self.type == "orientation":
                 self.vis = OrientationPlot(title=self.txt_Title.get(),
                               format_str=self.txt_Format.get(),
-                              max_samples=self.cb_MaxSample.get())
+                              max_samples=self.cb_MaxSample.get(),
+                              use_timestamp = self.checkvar_usetimestamp.get())
             else:
                 print("unknown type: " + self.type)
                 return
