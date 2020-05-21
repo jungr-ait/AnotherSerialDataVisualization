@@ -22,6 +22,10 @@ specified format (please, don't take a step back by just reading **C/C++**, ther
 
 TODO
 
+## Overview
+
+ ![Overview](doc/Overview.png "Overview")
+
 ## Modifying/Extending it
 
 In my opinion it is rather trivial to add an additional type of plot to the existing one. The lazy solution would be to directly modify the class `DataPlotter`.
@@ -93,6 +97,14 @@ Options:
 + filename: name of the desired csv <file>
 + create/close: creates a new or destroys a file.
 + flush: refreshes file on drive (slower, cause each new line will be written into the file)
+
+## VectorPlot3D
+
+![VectorPlot3D](doc/VectorPlot3D.png "VectorPlot3D")
+
+## OrientationPlot
+
+![OrientationPlot](doc/OrientationPlot.png "OrientationPlot")
 
 
 ## License
