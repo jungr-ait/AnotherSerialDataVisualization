@@ -18,9 +18,11 @@ A generic solution to process incoming data from the serial interface is to pars
 Each data logger or data plotter instance will be provided by a **format string** (Format) and process the received data if it matches the 
 specified format (please, don't take a step back by just reading **C/C++**, there is no need to be afraid).
 
-## Videos
+## Video Tutorial
 
-TODO
+[![Tutorial](http://img.youtube.com/vi/NcSRnaUSXU4/0.jpg)](https://youtu.be/NcSRnaUSXU4
+ "Video Title")
+
 
 ## Overview
 
@@ -100,11 +102,13 @@ Options:
 
 ## VectorPlot3D
 
-![VectorPlot3D](doc/VectorPlot3D.png "VectorPlot3D")
+![AccelerometerVector](./doc/LiveAccelerometerVector_15.gif)
+<!--- ![VectorPlot3D](doc/VectorPlot3D.png "VectorPlot3D") -->
 
 ## OrientationPlot
 
-![OrientationPlot](doc/OrientationPlot.png "OrientationPlot")
+![OrientationVector](./doc/LiveOrientationVector_15.gif)
+<!---![OrientationPlot](doc/OrientationPlot.png "OrientationPlot") -->
 
 
 ## License
