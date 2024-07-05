@@ -4,3 +4,6 @@ serial
 threaded_serial
 matplotlib
 PyPubSub
+pytransform3d
+numpy
+matplotlib
