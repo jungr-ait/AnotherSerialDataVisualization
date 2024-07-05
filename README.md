@@ -18,6 +18,17 @@ A generic solution to process incoming data from the serial interface is to pars
 Each data logger or data plotter instance will be provided by a **format string** (Format) and process the received data if it matches the 
 specified format (please, don't take a step back by just reading **C/C++**, there is no need to be afraid).
 
+## Setup 
+
+After cloning, run the `source setup-env.sh` that will
+1) generate the `requirements.txt` based on the submodules
+2) install a virtual environment `python-venv`
+3) activate the local interpreter `(venv)` or launch [PyCharm](https://www.jetbrains.com/pycharm/) from the root.
+
+If the virtual environment was already created, run
+1) `source activate.sh`
+
+
 ## Video Tutorial
 
 [![Tutorial](http://img.youtube.com/vi/NcSRnaUSXU4/0.jpg)](https://youtu.be/NcSRnaUSXU4
