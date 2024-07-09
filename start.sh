@@ -14,24 +14,6 @@
 
 CUR_DIR=${PWD}
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-VENV_DIR=${DIR}/python-venv
 
-
-# create virtual environment
-if [ ! -d "$VENV_DIR" ]; then
-  mkdir ${VENV_DIR} 
-fi  
-
-cd ${VENV_DIR}
-
-sudo apt-get install python3-venv
-python3 -m pip install virtualenv
-python3 -m venv env
-source env/bin/activate
-which python
-
-# install requirements:
-pip install -r ${DIR}/requirements.txt
-
-
-cd ${CUR_DIR}
+source ${DIR}/activate.sh
+python3 src/AnotherSerialDataVisualization.py
