@@ -18,16 +18,17 @@ A generic solution to process incoming data from the serial interface is to pars
 Each data logger or data plotter instance will be provided by a **format string** (Format) and process the received data if it matches the 
 specified format (please, don't take a step back by just reading **C/C++**, there is no need to be afraid).
 
-## Setup 
+## RUN
 
+ **run application with**
+1. `start.sh`
+
+## Debugging/Developing
+ 
 After cloning, run the `source setup-env.sh` that will
-1) generate the `requirements.txt` based on the submodules
-2) install a virtual environment `python-venv`
-3) activate the local interpreter `(venv)` or launch [PyCharm](https://www.jetbrains.com/pycharm/) from the root.
-
-If the virtual environment was already created, run
-1) `source activate.sh`
-
+1. install a virtual environment `python-venv`
+1.  activate the local interpreter `(venv)` or 
+1. launch [PyCharm](https://www.jetbrains.com/pycharm/) from the root. ``` $ pycharm .``` and select a custom interpreter with the `python-venv`.
 
 ## Video Tutorial
 
@@ -59,7 +60,7 @@ I hope that I could encourage you to make your hands dirty on my code ;)
 - tkinter
 - matplotlib
  
- ## SerialCOMViewer
+## SerialCOMViewer
  
 ![SerialCOMViewer](doc/SerialCOMViewer.png "SerialCOMViewer")
 
@@ -72,7 +73,7 @@ Once everything is set up, you can save the current configuration in `File->Save
 time. 
 
  
- ## PlotterWindow
+## PlotterWindow
  
  ![PlotterWindow](doc/PlotterWindow.png "PlotterWindow")
  
@@ -124,5 +125,5 @@ Options:
 
 ## License
 
-I like the saying:`sharing is caring`, therefore:
+`sharing is caring` 
 [GNU Lesser General Public License v3.0](https://choosealicense.com/licenses/lgpl-3.0/) 
